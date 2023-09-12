@@ -22,8 +22,8 @@
 <script src="/js/medium-zoom.js"></script>
 <script src="/js/dismissable-banner.js"></script>
 <script src="/js/scroll-nav-to-view-in-docs.js"></script><link rel="stylesheet" href="/assets/css/styles.e737a141.css">
-<script src="/assets/js/runtime~main.0ed776e9.js" defer="defer"></script>
-<script src="/assets/js/main.c13cd273.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.369737fc.js" defer="defer"></script>
+<script src="/assets/js/main.05bcc0bc.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"dark")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus">
@@ -32,6 +32,14 @@ identification of users, as well as delegating access to third-party resources. 
 configure Backstage to have any number of authentication providers, but only
 one of these will typically be used for sign-in, with the rest being used to provide
 access to external resources.</p>
+<blockquote>
+<p>NOTE: Identity management and the Sign-In page in Backstage is NOT a method for blocking
+access for unauthorized users. The identity system only serves to provide a personalized
+experience and access to a Backstage Identity Token, which can be passed to backend plugins.
+This also means that your Backstage backend APIs are by default unauthenticated.
+Thus, if your Backstage instance is exposed to the Internet, anyone can access
+information in the Backstage. You can learn more <a href="/docs/overview/threat-model#integrator-responsibilities">here</a>.</p>
+</blockquote>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="built-in-authentication-providers">Built-in Authentication Providers<a href="#built-in-authentication-providers" class="hash-link" aria-label="Direct link to Built-in Authentication Providers" title="Direct link to Built-in Authentication Providers">​</a></h2>
 <p>Backstage comes with many common authentication providers in the core library:</p>
 <ul>
@@ -66,14 +74,6 @@ allows a single auth backend to serve multiple environments, such as running a
 local frontend against a deployed backend. The provider configuration matching
 the local <code>auth.environment</code> setting will be selected.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="sign-in-configuration">Sign-In Configuration<a href="#sign-in-configuration" class="hash-link" aria-label="Direct link to Sign-In Configuration" title="Direct link to Sign-In Configuration">​</a></h2>
-<blockquote>
-<p>NOTE: Identity management and the <code>SignInPage</code> in Backstage is NOT a method
-for blocking access for unauthorized users, that either requires additional
-backend implementation or a separate service like Google&#x27;s Identity-Aware
-Proxy. The identity system only serves to provide a personalized experience
-and access to a Backstage Identity Token, which can be passed to backend
-plugins.</p>
-</blockquote>
 <p>Using an authentication provider for sign-in is something you need to configure
 both in the frontend app, as well as the <code>auth</code> backend plugin. For information
 on how to configure the backend app, see <a href="/docs/auth/identity-resolver">Sign-in Identities and Resolvers</a>.
