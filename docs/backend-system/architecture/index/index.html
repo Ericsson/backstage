@@ -22,7 +22,7 @@
 <script src="/js/medium-zoom.js"></script>
 <script src="/js/dismissable-banner.js"></script>
 <script src="/js/scroll-nav-to-view-in-docs.js"></script><link rel="stylesheet" href="/assets/css/styles.e737a141.css">
-<script src="/assets/js/runtime~main.6bd6f096.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.75dc42e4.js" defer="defer"></script>
 <script src="/assets/js/main.61163139.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -38,7 +38,7 @@ the new system. Regardless of whether you are setting up your own backstage
 instance, developing plugins, or extending plugins with new features, it is
 important to understand these concepts.</p>
 <p>The diagram below provides an overview of the different building blocks, and the other blocks that each of them interact with.</p>
-<p><img loading="lazy" alt="backend system building blocks diagram" src="/assets/images/architecture-building-blocks.drawio-430b163dc32c782f39b157aad36bf302.svg" width="642" height="327" class="img_ev3q"></p>
+<p><img loading="lazy" alt="backend system building blocks diagram" src="/assets/images/architecture-building-blocks.drawio-0f4dbebe5a6bbf21216b2fc759985804.svg" width="642" height="327" class="img_ev3q"></p>
 <blockquote>
 <p>NOTE: These are all concepts that existed in our old backend system in one way or another, but they have now all been lifted up to be first class concerns.</p>
 </blockquote>
@@ -52,11 +52,11 @@ important to understand these concepts.</p>
 <p>Services are also a customization point for individual backend installations. You can override services with your own implementations, as well as make smaller customizations to existing services.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="extension-points">Extension Points<a href="#extension-points" class="hash-link" aria-label="Direct link to Extension Points" title="Direct link to Extension Points">​</a></h3>
 <p>Many plugins have ways in which you can extend them, for example entity providers for the Catalog, or custom actions for the Scaffolder. These extension patterns are now encoded into Extension Points.</p>
-<p>Extension Points look a little bit like services, since you depended on them just like you would a service. A key difference is that extension points are registered and provided by plugins themselves, based on what customizations each individual plugin wants to expose.</p>
-<p>Extension Points are also exported separately from the plugin instance itself, and a single plugin can also expose multiple different extension points at once. This makes it easier to evolve and deprecate individual Extension Points over time, rather than dealing with a single large API surface.</p>
+<p>Extension Points look a little bit like services, since you depended on them just like you would a service. A key difference is that extension points are registered and provided by plugins or modules themselves, based on what customizations each of them want to expose.</p>
+<p>Extension Points are exported separately from the plugin or module instance itself, and it is possible to expose multiple different extension points at once. This makes it easier to evolve and deprecate individual Extension Points over time, rather than dealing with a single large API surface.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="modules">Modules<a href="#modules" class="hash-link" aria-label="Direct link to Modules" title="Direct link to Modules">​</a></h3>
-<p>Modules use the plugin Extension Points to add new features for plugins. They might for example add an individual Catalog Entity Provider, or one or more Scaffolder Actions. Modules are basically plugins for plugins.</p>
-<p>Each module may only extend a single plugin, and the module must be deployed together with that plugin in the same backend instance. Modules may however only communicate with their plugin through its registered extension points.</p>
+<p>Modules use Extension Points to add new features to other plugins or modules. They might for example add an individual Catalog Entity Provider, or one or more Scaffolder Actions.</p>
+<p>Each module may only use Extension Points that belong to a single plugin, and the module must be deployed together with that plugin in the same backend instance. Modules may only communicate with their plugin or other modules through the registered extension points.</p>
 <p>Just like plugins, modules also have access to services and can depend on their own service implementations. They will however share services with the plugin that they extend - there are no module-specific service implementations.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="package-structure">Package structure<a href="#package-structure" class="hash-link" aria-label="Direct link to Package structure" title="Direct link to Package structure">​</a></h2>
 <p>A detailed explanation of the package architecture can be found in the
