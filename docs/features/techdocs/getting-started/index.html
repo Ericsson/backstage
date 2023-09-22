@@ -22,7 +22,7 @@
 <script src="/js/medium-zoom.js"></script>
 <script src="/js/dismissable-banner.js"></script>
 <script src="/js/scroll-nav-to-view-in-docs.js"></script><link rel="stylesheet" href="/assets/css/styles.8ab2668b.css">
-<script src="/assets/js/runtime~main.128d6223.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3caf17d5.js" defer="defer"></script>
 <script src="/assets/js/main.786b0793.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -108,15 +108,25 @@ no config is provided.</p>
 <p>Setting <code>generator.runIn</code> to <code>local</code> means you will have to make sure your
 environment is compatible with techdocs.</p>
 <p>You will have to install the <code>mkdocs</code> and <code>mkdocs-techdocs-core</code> package from
-pip, as well as <code>graphviz</code> and <code>plantuml</code> from your OS package manager (e.g.
+pip, optionally also <code>graphviz</code> and <code>plantuml</code> from your OS package manager (e.g.
 apt).</p>
 <p>You can do so by including the following lines right above <code>USER node</code> of your
 <code>Dockerfile</code>:</p>
-<div class="language-Dockerfile codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#232323"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-Dockerfile codeBlock_bY9V thin-scrollbar"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#9CDCFE"><span class="token plain">RUN apt-get update &amp;&amp; apt-get install -y python3 python3-pip</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">RUN pip3 install mkdocs-techdocs-core==1.1.7</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<div class="language-Dockerfile codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#232323"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-Dockerfile codeBlock_bY9V thin-scrollbar"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#9CDCFE"><span class="token plain">RUN apt-get update &amp;&amp; apt-get install -y python3 python3-pip python3-venv</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">ENV VIRTUAL_ENV=/opt/venv</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">RUN python3 -m venv $VIRTUAL_ENV</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">ENV PATH=&quot;$VIRTUAL_ENV/bin:$PATH&quot;</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">RUN pip3 install mkdocs-techdocs-core</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
 <p>Please be aware that the version requirement could change, you need to check our
 <a href="https://github.com/backstage/techdocs-container/blob/main/Dockerfile" target="_blank" rel="noopener noreferrer"><code>Dockerfile</code></a>
 and make sure to match with it.</p>
-<p>Note: We recommend Python version 3.7 or higher.</p>
+<p>On a Debian-based Docker container, Python packages must be either installed using
+the OS package manager or within a virtual environment (see the
+<a href="https://peps.python.org/pep-0668/" target="_blank" rel="noopener noreferrer">related PEP</a>). Alternative is to use e.g.
+<a href="https://pypa.github.io/pipx/" target="_blank" rel="noopener noreferrer">pipx</a> for installing Python packages in an isolated
+environment.</p>
+<p>The above Dockerfile snippet installs the latest <code>mkdocs-techdoc-core</code> package.
+Version numbers can be found in the corresponding
+<a href="https://github.com/backstage/mkdocs-techdocs-core#changelog" target="_blank" rel="noopener noreferrer">changelog</a>. In
+case you want to pin the version, use the example below:</p>
+<div class="language-Dockerfile codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#232323"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-Dockerfile codeBlock_bY9V thin-scrollbar"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#9CDCFE"><span class="token plain">RUN pip3 install mkdocs-techdocs-core==1.2.3</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p>Note: We recommend Python version 3.11 or higher.</p>
 <blockquote>
 <p>Caveat: Please install the <code>mkdocs-techdocs-core</code> package after all other
 Python packages. The order is important to make sure we get correct version of
