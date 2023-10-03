@@ -22,8 +22,8 @@
 <script src="/js/medium-zoom.js"></script>
 <script src="/js/dismissable-banner.js"></script>
 <script src="/js/scroll-nav-to-view-in-docs.js"></script><link rel="stylesheet" href="/assets/css/styles.8ab2668b.css">
-<script src="/assets/js/runtime~main.f7f8c755.js" defer="defer"></script>
-<script src="/assets/js/main.e7672a8d.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.d05cd27b.js" defer="defer"></script>
+<script src="/assets/js/main.36798882.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"dark")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus">
@@ -351,8 +351,8 @@
 <p>de42eebaaf: Bumped dev dependencies <code>@types/node</code> and <code>mock-fs</code>.</p>
 </li>
 <li>
-<p>04a3f65e15: Bump Docker base images to <code>node:18-bullseye-slim</code> to fix compatibility issues raised during image build.</p>
-<p>You can apply these change to your own <code>Dockerfile</code> by replacing <code>node:16-bullseye-slim</code> with <code>node:18-bullseye-slim</code></p>
+<p>04a3f65e15: Bump Docker base images to <code>node:18-bookworm-slim</code> to fix node compatibility issues raised during image build.</p>
+<p>You can apply these change to your own <code>Dockerfile</code> by replacing <code>node:16-bullseye-slim</code> with <code>node:18-bookworm-slim</code></p>
 </li>
 <li>
 <p>5eacd5d213: The E2E test setup based on Cypress has been replaced with one based on <a href="https://playwright.dev/" target="_blank" rel="noopener noreferrer">Playwright</a>. Migrating existing apps is not required as this is a standalone setup, only do so if you also want to switch from Cypress to Playwright.</p>
