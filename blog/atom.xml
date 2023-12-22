@@ -2,11 +2,63 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://backstage.io/blog</id>
     <title>Backstage Software Catalog and Developer Platform Blog</title>
-    <updated>2023-09-29T00:00:00.000Z</updated>
+    <updated>2023-11-15T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://backstage.io/blog"/>
     <subtitle>Backstage Software Catalog and Developer Platform Blog</subtitle>
     <icon>https://backstage.io/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Wrap up: BackstageCon ‘23, KubeCon + Cloud Native NA]]></title>
+        <id>https://backstage.io/blog/2023/11/15/backstagecon-kubecon-23</id>
+        <link href="https://backstage.io/blog/2023/11/15/backstagecon-kubecon-23"/>
+        <updated>2023-11-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[BackstageCon ‘23, KubeCon + Cloud Native NA]]></summary>
+        <content type="html"><![CDATA[<p><img loading="lazy" alt="BackstageCon ‘23, KubeCon + Cloud Native NA" src="https://backstage.io/assets/images/00-cover-af1761cb266264d9f6b4ce6b66fa359f.png" width="1667" height="875" class="img_ev3q"></p>
+<p>tl;dr BackstageCon North America is officially in the books! We had a blast in Chicago talking about Backstage non-stop throughout the week at both BackstageCon and KubeCon. If you weren't able to join us, the <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc" target="_blank" rel="noopener noreferrer">BackstageCon talks are available</a> for replay on the CNCF YouTube channel.
+{/* truncate */}</p>
+<p>Obviously we're biased, but Backstage was definitely one of the big topics at <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/" target="_blank" rel="noopener noreferrer">KubeCon + CloudNativeCon North America</a> this year. Recently, the CNCF announced that Backstage was the <a href="https://www.cncf.io/blog/2023/10/27/october-2023-where-we-are-with-velocity-of-cncf-lf-and-top-30-open-source-projects/" target="_blank" rel="noopener noreferrer">third fastest-growing project</a> of the year (up from the fifth last year). And you could confirm it with your own eyes during BackstageCon and KubeCon: hundreds of people flocked through the event, talks, and the project booth sharing their enthusiasm and asking more questions about the project.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="backstagecon-a-growing-community">BackstageCon: A growing community&nbsp;<a href="https://backstage.io/blog/2023/11/15/backstagecon-kubecon-23#backstagecon-a-growing-community" class="hash-link" aria-label="Direct link to BackstageCon: A growing community&nbsp;" title="Direct link to BackstageCon: A growing community&nbsp;">​</a></h3>
+<p>With a whopping peak attendance of 400+ people, the crowd nearly doubled from last year,<a href="https://www.forbes.com/sites/janakirammsv/2023/11/14/backstage-project-takes-center-stage-at-kubecon-north-america-2023/?sh=1972303a6539" target="_blank" rel="noopener noreferrer"> taking the center stage of the conference</a>, as reported by Forbes. For some, BackstageCon was their first entry point into the community, but the event also boasted lots of&nbsp; familiar faces, mostly from some of the most mature adopters such as Dynatrace, Lunar, and US Bank. We also got to hear from new voices in the community like Comcast and Grafana Labs.</p>
+<p>We hear a lot of great questions such as:</p>
+<ul>
+<li>
+<p>How do I make more developers use my developer portal?</p>
+</li>
+<li>
+<p>Will generative AI take my Backstage instance to the next level?</p>
+</li>
+<li>
+<p>What's all the fuss around the upcoming Declarative Integration in Backstage?</p>
+</li>
+</ul>
+<p>The community got together to discuss these and more questions with exciting talks and debates. The talks were all recorded and are <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc" target="_blank" rel="noopener noreferrer">up on YouTube</a>, so make sure to check them out.</p>
+<p><strong>Driving Backstage adoption</strong></p>
+<p>Growing adoption was top of mind during BackstageCon. David Tuite, CEO of Roadie, shared the lessons learned from interviewing 20 adopters, which revealed that the Scaffolder was a prime place to get started when adopting Backstage, as it lets stakeholders get an easily measurable ROI.</p>
+<p><img loading="lazy" alt="Panel of Backstage adopters" src="https://backstage.io/assets/images/10-panel-f55c9936ee6e6d1d976be82574658f0e.jpg" width="1999" height="1500" class="img_ev3q"></p>
+<p>Helen Greul, Head of Engineering for Backstage at Spotify, hosted <a href="https://www.youtube.com/watch?v=Iti5glzYOG8&amp;list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc&amp;index=10" target="_blank" rel="noopener noreferrer">a panel discussion</a> with four adopters that are using Backstage at scale: Twilio, Lunar Bank, US Bank, and Expedia. The crucial role of Backstage in fostering inner sourcing and simplifying new hires onboarding were a few of the subjects covered in the panel.</p>
+<p>How adopters are using Backstage was also a highlight of the day. B3, Brazil's Stock Exchange, shared <a href="https://www.youtube.com/watch?v=FyWCKIVYO7g&amp;list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc&amp;index=14" target="_blank" rel="noopener noreferrer">how they're building their developer portal</a>. And from Grafana Labs, we heard how they're using <a href="https://www.youtube.com/watch?v=q-JUWob69Hw&amp;list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc&amp;index=10" target="_blank" rel="noopener noreferrer">Backstage along Crossplane to drive GitOps</a>.</p>
+<p><strong>What's next with Backstage?</strong></p>
+<p>The discussion on how Backstage is evolving was featured in a few talks, through live demos that — remarkably — did not go wrong even once! Ben (<a href="https://github.com/benjdlambert" target="_blank" rel="noopener noreferrer">benjdlambert</a>) and Patrik (<a href="https://github.com/Rugvip" target="_blank" rel="noopener noreferrer">Rugvip</a>), core maintainers, presented an introduction to the plans around <a href="https://www.youtube.com/watch?v=8hVMNMXXN44&amp;list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc&amp;index=8" target="_blank" rel="noopener noreferrer">Declarative Integration</a>, which will allow people to install plugins without dealing with TypeScript or React. On the other hand, Djamaile and Mitch, from Spotify, <a href="https://www.youtube.com/watch?v=bUdaO9NKXJY&amp;list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc&amp;index=12" target="_blank" rel="noopener noreferrer">introduced the upcoming Quickstart</a>, a tool from Spotify in private-beta that will allow anyone to get started with Backstage through a GUI in a few steps.</p>
+<p><strong>A thriving community</strong></p>
+<p>People gathered outside the conference room where BackstageCon was happening to catch up with each other and learn from the event sponsors. It was great to connect with everyone and talk about how everyone is using Backstage.</p>
+<p><img loading="lazy" alt="KubeCon Attendees" src="https://backstage.io/assets/images/20-booth-b2a4d9d8d1f03a675222faa335f443d4.jpg" width="1999" height="1500" class="img_ev3q"></p>
+<p><img loading="lazy" alt="Spotify at BackstageCon" src="https://backstage.io/assets/images/30-spotify-kubecon-b01e6914b1a0e96a0f025b9ad8591f7f.jpg" width="1999" height="1500" class="img_ev3q"></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="mom-backstage-is-not-a-phase">Mom, Backstage is not a phase<a href="https://backstage.io/blog/2023/11/15/backstagecon-kubecon-23#mom-backstage-is-not-a-phase" class="hash-link" aria-label="Direct link to Mom, Backstage is not a phase" title="Direct link to Mom, Backstage is not a phase">​</a></h3>
+<p>The interest from the cloud-native community in Backstage did not waver this year. Instead, the Backstage booth in the KubeCon Project Pavillion saw a nonstop flux of visitors asking more about the project. There were three talks featuring Backstage during KubeCon.</p>
+<p><strong>Backstage talks during KubeCon NA '23</strong></p>
+<p>The first talk touching on Backstage of the schedule was Tim Hansen's (<a href="https://github.com/timbonicus" target="_blank" rel="noopener noreferrer">timbonicus</a>) "Everything Is Code: Embracing GitOps at Spotify," who achieved rockstar status thanks to his phenomenal insights. The queue to ask questions after the talk's questions was surreal!</p>
+<p><img loading="lazy" alt="KubeCon Attendees" src="https://backstage.io/assets/images/40-tim-talk-ba14abf3c76daf3c15ae23361eb2e6e9.jpg" width="1999" height="1500" class="img_ev3q"></p>
+<p>Backstage maintainers Ben and Patrik addressed a full-room during their talk “Simplifying Backstage - Breaking the Code Barrier” in which they explained Declarative Integration, how it works and the expected migration path. Declarative Integration will enable adopters to install the plugins they use—and even customize them—without dealing with TypeScript or React.</p>
+<p><img loading="lazy" alt="KubeCon Attendees" src="https://backstage.io/assets/images/50-patrik-ben-full-16bb2a4ab471ae541d6f3891da9bef94.jpg" width="1999" height="1500" class="img_ev3q"></p>
+<p>And to close the event, Ritesh Patel, Nirmata and David Murphy, Upbound, introduced the BACK Stack, which stands for Backstage, Argo, Crossplane, and Kyverno. These four tools make up a powerful combo that can enable self-service workflows secure and scalable. After a great demo, the speakers presented a reference architecture that can help guide an approach to using Backstage to build your platform.</p>
+<p><img loading="lazy" alt="KubeCon Attendees" src="https://backstage.io/assets/images/60-back-stack-a3d4e7f46aafd58b674887d1a3c9aa52.jpg" width="1999" height="1500" class="img_ev3q"></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="see-you-next-year">See you next year!<a href="https://backstage.io/blog/2023/11/15/backstagecon-kubecon-23#see-you-next-year" class="hash-link" aria-label="Direct link to See you next year!" title="Direct link to See you next year!">​</a></h3>
+<p>The next KubeCon Europe is scheduled for March 18-22 in Paris. We're looking forward to meeting you all there! <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-europe/program/cfp/" target="_blank" rel="noopener noreferrer">KubeCon EU</a> and<a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-europe/co-located-events/backstagecon/" target="_blank" rel="noopener noreferrer"> BackstageCon EU</a> are accepting CFPs, submit your proposal now!</p>]]></content>
+        <author>
+            <name>Jorge Lainfiesta, Spotify</name>
+            <uri>https://www.linkedin.com/in/jrlainfiesta/</uri>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Adopter Spotlight: How Chicago Trading Company saved 18 months of developer effort with Backstage]]></title>
         <id>https://backstage.io/blog/2023/09/29/chicago-traiding-company-adopter-spotlight</id>
@@ -993,52 +1045,6 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <author>
             <name>Francesco Corti, Spotify</name>
             <uri>https://github.com/fcorti/</uri>
-        </author>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Backstage Turns Two!]]></title>
-        <id>https://backstage.io/blog/2022/03/16/backstage-turns-two</id>
-        <link href="https://backstage.io/blog/2022/03/16/backstage-turns-two"/>
-        <updated>2022-03-16T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[A cake celebrating Backstage’s second birthday]]></summary>
-        <content type="html"><![CDATA[<p><img loading="lazy" alt="A cake celebrating Backstage’s second birthday" src="https://backstage.io/assets/images/backstage-2nd-birthday-7da17e155e85f480531f780a560238d2.gif" width="1200" height="630" class="img_ev3q"></p>
-<p><strong>TLDR:</strong> Backstage has turned two. Of course, this is software, so we expect things to move fast. But when you have a passionate, worldwide community building together, we’ve now seen firsthand just how fast that can be. We’re marking our second year as a community by becoming a CNCF incubating project, reaching 100 public adopters, releasing version 1.0 of the core app, and other very nice birthday gifts. Rather than a toddler finding their feet, Backstage today is beginning to look awfully grown-up for a two-year-old.</p>
-<p>{/* truncate */}</p>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="out-of-the-sandbox-and-into-incubation">Out of the Sandbox and into Incubation<a href="https://backstage.io/blog/2022/03/16/backstage-turns-two#out-of-the-sandbox-and-into-incubation" class="hash-link" aria-label="Direct link to Out of the Sandbox and into Incubation" title="Direct link to Out of the Sandbox and into Incubation">​</a></h2>
-<p>Two years ago, a small team at Spotify launched Backstage into open source during our internal Hack Week. We knew we had something special on our hands and that Backstage could potentially be the most ambitious open source project in Spotify’s history (you can listen to me wax philosophical on this topic more in <a href="https://open.spotify.com/episode/332yTwGiILGKTS7dsHCj2P?si=pX9xTzB2SgmsROdlLLr24A" target="_blank" rel="noopener noreferrer">Episode 2 of the new NerdOut@Spotify podcast</a>.)</p>
-<p>When Spotify donated the project to the CNCF, we saw it as the first promising step toward making Backstage an industry standard. As the home to Kubernetes, Envoy, and so many other game-changing open technologies, the CNCF and its community has had a wide-ranging impact on the daily lives of developers everywhere. And that’s what we hoped for Backstage, even back then.</p>
-<p>But we couldn't have envisioned where we’d be two years later — part of an ever-growing community of people that feel as passionate as we do about unlocking better developer experience for every engineering organization.</p>
-<p>Yesterday, the CNCF announced that its <a href="https://github.com/cncf/toc" target="_blank" rel="noopener noreferrer">Technical Oversight Committee</a> (TOC) voted to accept Backstage as a <a href="https://www.cncf.io/blog/2022/03/15/backstage-project-joins-the-cncf-incubator/" target="_blank" rel="noopener noreferrer">CNCF incubating project</a>. The move from the CNCF Sandbox to Incubation is an important step forward for the project’s technical governance.</p>
-<p>It’s also recognition for all the work the Backstage open source community has done to advance and grow this project since we launched the repo on GitHub just a few weeks after that Hack Week. We still have a long way to go to becoming the standard, but moving out of the CNCF Sandbox and beginning the Incubation phase is further validation of those aspirations.</p>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="what-do-retailers-gaming-studios-banks-airlines-streamers-startups-and-enterprise-software-makers-all-have-in-common">What do retailers, gaming studios, banks, airlines, streamers, startups, and enterprise software makers all have in common?<a href="https://backstage.io/blog/2022/03/16/backstage-turns-two#what-do-retailers-gaming-studios-banks-airlines-streamers-startups-and-enterprise-software-makers-all-have-in-common" class="hash-link" aria-label="Direct link to What do retailers, gaming studios, banks, airlines, streamers, startups, and enterprise software makers all have in common?" title="Direct link to What do retailers, gaming studios, banks, airlines, streamers, startups, and enterprise software makers all have in common?">​</a></h2>
-<p>Developers, developers, developers — that’s what all companies have in common. Developers dealing with <a href="https://youtu.be/85TQEpNCaU0" target="_blank" rel="noopener noreferrer">more complexity</a> than they’ve ever had to deal with before. Developers who want to be able to go from idea to bug fix or feature faster.</p>
-<p>Two years in, the Backstage ecosystem has grown by leaps and bounds. More than 5,000 contributors have joined the project and are submitting bugs, adding new features, and building valuable plugins that benefit the greater community. From <a href="https://backstage.spotify.com/blog/measuring-backstage-proof-of-value-at-expedia/" target="_blank" rel="noopener noreferrer">Expedia Group</a> (adopter No.18) to Unity (adopter No.67), Backstage now has <a href="https://github.com/backstage/backstage/blob/master/ADOPTERS.md" target="_blank" rel="noopener noreferrer">100 publicly listed adopters</a> across a variety of industries, including retail, gaming, financial services, manufacturing, and government.</p>
-<p>We have companies like <a href="http://roadie.io/" target="_blank" rel="noopener noreferrer">Roadie</a> providing hosting solutions and ThoughtWorks <a href="https://www.thoughtworks.com/en-us/about-us/news/2021/thoughtworks-is-collaborating-with-spotify-to-deliver-better-dev" target="_blank" rel="noopener noreferrer">providing technology and consulting services</a> to teams looking to stand up Backstage in their own orgs. We’re starting to see more and more job listings for Backstage developers which tells us that companies of all shapes and sizes are going all-in on Backstage and developer effectiveness.</p>
-<p>Also, I’ll pause now to give a special shoutout to our early adopters. They stuck with us through all the bumps and breaking changes. But because of their early commitment, we now see instances of Backstage up and running in so many different kinds of engineering organizations. From <a href="https://youtu.be/6sg5uMCLxTA" target="_blank" rel="noopener noreferrer">Zalando</a> to <a href="https://backstage.spotify.com/blog/adopter-spotlight/american-airlines-runway/" target="_blank" rel="noopener noreferrer">American Airlines</a> and <a href="https://backstage.spotify.com/blog/community-session/11-brex-backstage-upgrade-helper/" target="_blank" rel="noopener noreferrer">Brex</a>, the growing pains of our earliest adopters helped pave the way for smoother adoptions for all who follow them.</p>
-<p>A few more numbers that make us proud:</p>
-<ul>
-<li>2,000+ project forks</li>
-<li>20,000+ commits</li>
-<li>10,000+ PRs &amp; issues</li>
-<li>15,000+ stars on GitHub</li>
-<li>60+ open source plugins in the <a href="https://backstage.io/plugins" target="_blank" rel="noopener noreferrer">Backstage Plugin Marketplace</a></li>
-</ul>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="a-global-community-of-friendly-helpful-contributors">A global community of friendly, helpful contributors<a href="https://backstage.io/blog/2022/03/16/backstage-turns-two#a-global-community-of-friendly-helpful-contributors" class="hash-link" aria-label="Direct link to A global community of friendly, helpful contributors" title="Direct link to A global community of friendly, helpful contributors">​</a></h2>
-<p>We open sourced Backstage in March 2020 and then almost immediately went into lockdown. When you think about this project in the context of the pandemic, it's really remarkable how much this community has been able to achieve.</p>
-<p>The Backstage community is truly global with adopters and contributors from almost every continent (sorry, Antarctica!) coming together to share what they’ve worked on and demo cool stuff in our monthly Community Sessions. The repo and the Discord server truly never sleep as a growing group of dedicated Backstage experts outside Spotify support one another and offer help 24/7.</p>
-<p>We asked a few contributors and maintainers to share their thoughts around this two-year milestone.</p>
-<iframe width="780" height="440" src="https://www.youtube.com/embed/-j-waaybcH0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-<p>Warms the heart, doesn’t it? Thanks again to all our contributors for making this possible. Seriously. We’re proud of what the community has accomplished and how we’ve accomplished it. All along, it’s your enthusiasm and warm/collaborative/positive vibes that have carried us and this project through.</p>
-<p>##&nbsp;Version 1.0 and beyond</p>
-<p>Tomorrow, we’ll be releasing version 1.0 of the Backstage core framework, including Software Catalog, Software Templates, TechDocs, and API Reference. With Backstage 1.0, the project’s core components are coming out of beta and into production with regular versioning and release cycle commitments (check back on this blog for more details!).</p>
-<p>v1.0 paves the way for more adoption, a bigger community, more contributions — and with this continued growth in the ecosystem, we expect even greater innovation on the platform just on the horizon with exchange of features and plugins.</p>
-<p>What comes next for Backstage is — in many ways — entirely up to you. We are looking to this community to <a href="https://backstage.io/docs/overview/roadmap" target="_blank" rel="noopener noreferrer">help us shape the next year</a>.</p>
-<p>If you’re already a part of this community, thank you for your hard work and dedication. Backstage wouldn’t be where it is today without you. We’ve come a long way together, but there’s still so much to do.</p>
-<p>And if you haven’t signed up yet, there’s plenty of room on this party boat! And there’s never been a better time to hop on board. As Irma (<a href="https://github.com/Irma12" target="_blank" rel="noopener noreferrer">@Irma12</a>) said so beautifully: where else is there an opportunity to have so many people look at your code, hear you out, and help you out?</p>
-<p>Take a look at how to <a href="https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">start contributing</a> and <a href="https://github.com/backstage/community" target="_blank" rel="noopener noreferrer">join the community</a>!</p>]]></content>
-        <author>
-            <name>Lee Mills, Spotify</name>
-            <uri>https://github.com/leemills83</uri>
         </author>
     </entry>
 </feed>
