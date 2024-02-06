@@ -1,0 +1,1 @@
+(self.webpackChunkstorybook=self.webpackChunkstorybook||[]).push([[7372],{"../node_modules/highlight.js/lib/languages/julia-repl.js":module=>{module.exports=function juliaRepl(hljs){return{name:"Julia REPL",contains:[{className:"meta",begin:/^julia>/,relevance:10,starts:{end:/^(?![ ]{6})/,subLanguage:"julia"},aliases:["jldoctest"]}]}}}}]);

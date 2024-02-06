@@ -1,1 +1,0 @@
-(self.webpackChunkstorybook=self.webpackChunkstorybook||[]).push([[1666],{"../node_modules/highlight.js/lib/languages/plaintext.js":module=>{module.exports=function plaintext(hljs){return{name:"Plain text",aliases:["text","txt"],disableAutodetect:!0}}}}]);

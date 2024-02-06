@@ -1,1 +1,0 @@
-(self.webpackChunkstorybook=self.webpackChunkstorybook||[]).push([[8048],{"../node_modules/highlight.js/lib/languages/erb.js":module=>{module.exports=function erb(hljs){return{name:"ERB",subLanguage:"xml",contains:[hljs.COMMENT("<%#","%>"),{begin:"<%[%=-]?",end:"[%-]?%>",subLanguage:"ruby",excludeBegin:!0,excludeEnd:!0}]}}}}]);

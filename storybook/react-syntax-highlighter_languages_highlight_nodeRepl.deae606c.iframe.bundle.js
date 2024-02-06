@@ -1,1 +1,0 @@
-(self.webpackChunkstorybook=self.webpackChunkstorybook||[]).push([[4887],{"../node_modules/highlight.js/lib/languages/node-repl.js":module=>{module.exports=function nodeRepl(hljs){return{name:"Node REPL",contains:[{className:"meta",starts:{end:/ |$/,starts:{end:"$",subLanguage:"javascript"}},variants:[{begin:/^>(?=[ ]|$)/},{begin:/^\.\.\.(?=[ ]|$)/}]}]}}}}]);
