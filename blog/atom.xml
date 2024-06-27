@@ -2,11 +2,420 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://backstage.io/blog</id>
     <title>Backstage Software Catalog and Developer Platform Blog</title>
-    <updated>2023-11-15T00:00:00.000Z</updated>
+    <updated>2024-04-19T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://backstage.io/blog"/>
     <subtitle>Backstage Software Catalog and Developer Platform Blog</subtitle>
     <icon>https://backstage.io/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Introducing the Backstage Community Plugins Repository]]></title>
+        <id>https://backstage.io/blog/2024/04/19/community-plugins</id>
+        <link href="https://backstage.io/blog/2024/04/19/community-plugins"/>
+        <updated>2024-04-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[tl;dr: We've set up the new community plugins repository, and have migrated most of the packages in the plugins directory of the main Backstage repository to their new home!]]></summary>
+        <content type="html"><![CDATA[<p><strong>tl;dr</strong>: We've set up the new <a href="https://github.com/backstage/community-plugins" target="_blank" rel="noopener noreferrer">community plugins repository</a>, and have migrated most of the packages in the <code>plugins</code> directory of the main Backstage repository to their new home!</p>
+<p>For those who depended on these plugins, migrating is as simple as <code>yarn backstage-cli versions:bump</code> then <code>yarn backstage-cli versions:migrate</code>. If you're already on <code>1.26.1</code>, then be sure to run <code>yarn backstage-cli versions:bump --skip-migrate</code> then <code>yarn backstage-cli versions:migrate</code> to take advantage of the code reference replacement helpers.</p>
+<!-- -->
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="the-community-plugins-repo">The community plugins repo<a href="https://backstage.io/blog/2024/04/19/community-plugins#the-community-plugins-repo" class="hash-link" aria-label="Direct link to The community plugins repo" title="Direct link to The community plugins repo">​</a></h2>
+<p>Some of you who have been around a while, or have seen our <a href="https://www.youtube.com/watch?v=ONMBYnhxnNU" target="_blank" rel="noopener noreferrer">Maintainer Track talks</a> at KubeCon, might have seen <a href="https://github.com/backstage/backstage/issues/20266" target="_blank" rel="noopener noreferrer">this RFC</a> which outlines some issues with the scale of the <code>backstage/backstage</code> monorepo, and us as maintainers being the de facto owners of all plugins without a <a href="https://github.com/backstage/community/blob/main/GOVERNANCE.md#project-area" target="_blank" rel="noopener noreferrer">project area</a> or <a href="https://github.com/backstage/community/blob/main/GOVERNANCE.md#project-area-maintainer" target="_blank" rel="noopener noreferrer">plugin maintainer</a>.</p>
+<p>There was some great discussion in this issue, and some great ideas. One of the ideas was to create a dedicated home for community plugins, with all the burden of release tooling and workspace tooling already set up, which is a pretty big barrier for people wanting to create plugins for Backstage in their own organization or personal account. These plugins would then have the ability to release independently of the main monorepo, and have their own release cadence, which is something that we've been looking at exploring for a while.</p>
+<p>With Red Hat wanting to join forces and help get this set up, this is the path that we picked, and the last few months have been a lot of hard work from both sides getting this repository in shape and coming up with a deprecation plan for these plugins in the main repository.</p>
+<p>Would also like to give a shoutout to all the <a href="https://github.com/backstage/backstage/blob/master/OWNERS.md#community-plugins" target="_blank" rel="noopener noreferrer">Community Plugins project area</a> maintainers, who have been helping get us to this state! <a href="https://github.com/vinzscam" target="_blank" rel="noopener noreferrer">@vinzscam</a> <a href="https://github.com/tudi2d" target="_blank" rel="noopener noreferrer">@tudi2d</a> <a href="https://github.com/BethGriggs" target="_blank" rel="noopener noreferrer">@bethgriggs</a> <a href="https://github.com/kadel" target="_blank" rel="noopener noreferrer">@kadel</a> <a href="https://github.com/awanlin" target="_blank" rel="noopener noreferrer">@awanlin</a> 👏</p>
+<p>And now with the release of <code>1.26.3</code> there's a large amount of plugins from the main monorepo that have been migrated over to the new <a href="https://github.com/backstage/community-plugins" target="_blank" rel="noopener noreferrer">community plugins repository</a>. <!-- -->🎉</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="the-migration">The migration<a href="https://backstage.io/blog/2024/04/19/community-plugins#the-migration" class="hash-link" aria-label="Direct link to The migration" title="Direct link to The migration">​</a></h2>
+<p>With the moving of these plugins, we thought it would also be a good time to move the <code>npm</code> scope, so that end users can differentiate between Backstage packages, and community-maintained packages. So the <code>@backstage-community</code> namespace was born!</p>
+<p>This makes migration a little tricky for end users, as there's going to be code references and <code>package.json</code> dependencies pointing to the older packages which are no longer going to be published.</p>
+<p>We've added some tooling into the <code>@backstage/cli</code> which is going to smooth the transition here. The last versions which are published under the <code>@backstage/</code> scope from the monorepo, will have a special field in the <code>package.json</code> with a hint to the CLI as to what this package is now called.</p>
+<p>The CLI will then be able to replace these references inside the <code>./src</code> folder of your codebase, and update your <code>package.json</code> dependencies to the new <code>@backstage-community</code> scope.</p>
+<p>You can migrate today by running the following:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#232323"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#232323"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#9CDCFE"><span class="token comment" style="color:rgb(106, 153, 85)"># &lt; 1.26.1</span><span class="token plain"></span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token function" style="color:rgb(220, 220, 170)">yarn</span><span class="token plain"> backstage-cli versions:bump</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token function" style="color:rgb(220, 220, 170)">yarn</span><span class="token plain"> backstage-cli versions:migrate</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token comment" style="color:rgb(106, 153, 85)"># 1.26.1</span><span class="token plain"></span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token function" style="color:rgb(220, 220, 170)">yarn</span><span class="token plain"> backstage-cli versions:bump --skip-migrate</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain"></span><span class="token function" style="color:rgb(220, 220, 170)">yarn</span><span class="token plain"> backstage-cli versions:migrate</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+<p>From this latest <code>1.26.3</code> release and onwards, the <code>backstage-cli versions:bump</code> command will automatically check for moved packages, so you shouldn't have to worry about running this every time.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="help-my-plugin-has-been-moved">Help! My plugin has been moved!<a href="https://backstage.io/blog/2024/04/19/community-plugins#help-my-plugin-has-been-moved" class="hash-link" aria-label="Direct link to Help! My plugin has been moved!" title="Direct link to Help! My plugin has been moved!">​</a></h2>
+<p>No stress! If you were a <code>CODEOWNER</code> of the code in the monorepo, these permissions will be migrated over to the <a href="https://github.com/backstage/community-plugins" target="_blank" rel="noopener noreferrer">community plugins repository</a> so you should still have access to the code. And now you're in charge of releasing your own plugin! 🚀 You can do that by following the same flow from the monorepo, with changesets and merging the <code>Version Packages (My Plugin)</code> PR.</p>
+<p>Please reach out to us on <a href="https://discord.com/invite/backstage-687207715902193673" target="_blank" rel="noopener noreferrer">Discord</a> if you have any issues! We're looking forward to working together in the new space!</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="whats-moved">What's moved?<a href="https://backstage.io/blog/2024/04/19/community-plugins#whats-moved" class="hash-link" aria-label="Direct link to What's moved?" title="Direct link to What's moved?">​</a></h2>
+<p>We've taken a pretty big chunk of the plugins from the main monorepo and moved them over to the new repository. There could be more plugins over time that are moved, or even ones that we promote back to the main monorepo.</p>
+<details class="details_lb9f alert alert--info details_b_Ee" data-collapsed="true"><summary><p>Here's a list of plugins that have been moved with this release</p></summary><div><div class="collapsibleContent_i85q"><ul>
+<li>
+<p><code>@backstage/plugin-adr-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-adr-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-adr</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-airbrake-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-airbrake</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-allure</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-analytics-module-ga</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-analytics-module-ga4</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-analytics-module-newrelic-browser</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-apache-airflow</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-apollo-explorer</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-azure-devops-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-azure-devops-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-azure-devops</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-azure-sites-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-azure-sites-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-azure-sites</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-badges-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-badges</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-bazaar-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-bazaar</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-bitrise</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-cicd-statistics-module-gitlab</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-cicd-statistics</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-circleci</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-cloudbuild</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-code-climate</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-code-coverage-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-code-coverage</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-codescene</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-cost-insights-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-cost-insights</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-dynatrace</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-entity-feedback-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-entity-feedback-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-entity-feedback</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-entity-validation</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-explore-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-explore-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-explore-react</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-explore</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-firehydrant</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-fossa</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-gcalendar</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-gcp-projects</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-git-release-manager</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-github-actions</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-github-deployments</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-github-issues</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-github-pull-requests-board</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-gitops-profiles</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-gocd</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-graphiql</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-graphql-voyager</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-ilert</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-jenkins-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-jenkins-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-jenkins</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-kafka-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-kafka</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-lighthouse-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-lighthouse-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-lighthouse</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-linguist</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-linguist-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-linguist-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-microsoft-calendar</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-newrelic-dashboard</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-newrelic</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-nomad</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-nomad-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-octopus-deploy</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-opencost</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-periskop-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-periskop</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-playlist-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-playlist-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-playlist</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-puppetdb</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-rollbar-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-rollbar</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-sentry</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-shortcuts</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-sonarqube-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-sonarqube-react</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-sonarqube</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-splunk-on-call</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-stack-overflow-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-stack-overflow</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-stackstorm</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-tech-insights-backend-module-jsonfc</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-tech-insights-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-tech-insights-common</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-tech-insights-node</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-tech-insights</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-tech-radar</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-vault-backend</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-vault-node</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-vault</code></p>
+</li>
+<li>
+<p><code>@backstage/plugin-xcmetrics</code></p>
+</li>
+</ul></div></div></details>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="whats-next">What's next?<a href="https://backstage.io/blog/2024/04/19/community-plugins#whats-next" class="hash-link" aria-label="Direct link to What's next?" title="Direct link to What's next?">​</a></h2>
+<p>There's going to be a little bit of time now in this migration period where there's going to be issues and pull requests not in the right place, and we're going to do our best to transfer issues to the community plugins repository instead. We will shortly be removing the code for these plugins from the main monorepo as it now has a new home in the community plugins repository.</p>
+<p>We're also going to be looking at bringing in some more of the great tooling from the <code>backstage/backstage</code> monorepo into the community plugins repository to help out with more automation for dependency bumps, etc.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="how-can-i-get-involved">How can I get involved?<a href="https://backstage.io/blog/2024/04/19/community-plugins#how-can-i-get-involved" class="hash-link" aria-label="Direct link to How can I get involved?" title="Direct link to How can I get involved?">​</a></h2>
+<p>If you're interested in getting involved with the community and helping us maintain this repository, please reach out either on <a href="https://discord.com/invite/backstage-687207715902193673" target="_blank" rel="noopener noreferrer">Discord</a> or in an issue on the <a href="https://github.com/backstage/community" target="_blank" rel="noopener noreferrer">community repository</a>.</p>
+<p>If you're wanting to contribute some plugins to Backstage, the community plugin repository is open for business <!-- -->🎉<!-- --> and we're looking forward to seeing what you come up with! Head over to the <a href="https://github.com/backstage/community-plugins/tree/main/README.md" target="_blank" rel="noopener noreferrer">community plugins docs</a> to get started creating your own workspace!</p>
+<p>Thanks!</p>]]></content>
+        <author>
+            <name>Ben Lambert, Spotify</name>
+            <uri>https://github.com/benjdlambert</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Backstage in Paris: Wrapping up BackstageCon and KubeCon + CloudNativeCon Europe 2024]]></title>
+        <id>https://backstage.io/blog/2024/03/27/backstagecon-kubecon-24</id>
+        <link href="https://backstage.io/blog/2024/03/27/backstagecon-kubecon-24"/>
+        <updated>2024-03-27T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[tl;dr: And with that the first BackstageCon Europe comes to an end! The City of Light was good to Backstage with many great conversations at both BackstageCon and KubeCon + CloudNativeCon Europe 2024. If you weren't able to join, the CNCF has a great playlist of all the BackstageCon talks ready to go on YouTube. Check out some of the highlights below — then grab your popcorn and settle in!]]></summary>
+        <content type="html"><![CDATA[<p><strong>tl;dr</strong>: And with that the first BackstageCon Europe comes to an end! The City of Light was good to Backstage with many great conversations at both BackstageCon and KubeCon + CloudNativeCon Europe 2024. If you weren't able to join, the CNCF has a great playlist of all the <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2P4KPyeDFexAVm6ZvfAWMU8" target="_blank" rel="noopener noreferrer">BackstageCon talks</a> ready to go on YouTube. Check out some of the highlights below — then grab your popcorn and settle in!</p>
+<!-- -->
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="celebrating-four-years-of-backstage">Celebrating Four Years of Backstage<a href="https://backstage.io/blog/2024/03/27/backstagecon-kubecon-24#celebrating-four-years-of-backstage" class="hash-link" aria-label="Direct link to Celebrating Four Years of Backstage" title="Direct link to Celebrating Four Years of Backstage">​</a></h2>
+<iframe src="https://www.youtube.com/embed/NgYrweEbFNE" width="100%" height="440" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+<p>Wow! Has it already been four years since we open sourced Backstage? What an amazing run it's been so far. We continue to see the rate of pull requests steadily increase, the attendance and number of <a href="https://github.com/backstage/community/tree/main/sigs" target="_blank" rel="noopener noreferrer">special interest groups</a> (SIGs) has grown, and more people are dedicating their time to new <a href="https://github.com/backstage/community/tree/main/project-areas" target="_blank" rel="noopener noreferrer">project areas</a>!</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="day-1-backstagecon-arrives-in-europe">Day 1: BackstageCon arrives in Europe<a href="https://backstage.io/blog/2024/03/27/backstagecon-kubecon-24#day-1-backstagecon-arrives-in-europe" class="hash-link" aria-label="Direct link to Day 1: BackstageCon arrives in Europe" title="Direct link to Day 1: BackstageCon arrives in Europe">​</a></h2>
+<p>This was the third BackstageCon and the first to take place outside North America. As you can see, it started with a bang.</p>
+<p><img decoding="async" loading="lazy" alt="BackstageCon Europe 2024" src="https://backstage.io/assets/images/backstagecon-europe-2024-ebb97d6902698c8c62e5f7e3dfa9ce1b.jpg" width="1999" height="1333" class="img_ev3q">
+Via <a href="https://www.flickr.com/photos/143247548@N03/albums/72177720315561784/" target="_blank" rel="noopener noreferrer">Cloud Native Computing Foundation</a> on Flickr</p>
+<p>With hosts like <a href="https://www.linkedin.com/in/balajisiva" target="_blank" rel="noopener noreferrer">Balaji Sivasubramanian</a> (Head of Product Management, Red Hat) and <a href="https://se.linkedin.com/in/elenagreul" target="_blank" rel="noopener noreferrer">Helen Greul</a> (Head of Engineering for Backstage, Spotify) <a href="https://www.youtube.com/watch?v=PwVUW8is_WY&amp;list=PLj6h78yzYM2P4KPyeDFexAVm6ZvfAWMU8&amp;index=2" target="_blank" rel="noopener noreferrer">kicking things off</a>, how could BackstageCon Europe not be a smashing success!</p>
+<p>More highlights from the day:</p>
+<ul>
+<li><strong>Happy alignment:</strong> Do you know when teams really need to be aligned? When they're working at a bank. <a href="https://www.linkedin.com/in/thomas-gr%C3%B8nb%C3%A6k/" target="_blank" rel="noopener noreferrer">Thomas Grønbæk</a> (Senior Manager, Bankdata) gave an exciting talk about how “<a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2P4KPyeDFexAVm6ZvfAWMU8" target="_blank" rel="noopener noreferrer">Backstage Made 500+ Developers Happy</a>” in the highly regulated banking industry.</li>
+<li><strong>Scaling up:</strong> On the topic of scaling Backstage — a frequent subject on our <a href="https://discord.com/invite/backstage-687207715902193673" target="_blank" rel="noopener noreferrer">Discord</a> — <a href="https://se.linkedin.com/in/vincenzoscamporlino" target="_blank" rel="noopener noreferrer">Vincenzo Scamporlino</a> (Senior Software Engineer, Spotify) gave us <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2P4KPyeDFexAVm6ZvfAWMU8" target="_blank" rel="noopener noreferrer">his recommendations</a> that will be helpful for many adopters who want to bring their instance to the next level.</li>
+<li><strong>Lightning round:</strong> There were several awesome <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2P4KPyeDFexAVm6ZvfAWMU8" target="_blank" rel="noopener noreferrer">lightning talks</a> on varying topics — dynamic plugins, accessibility, OpenAPI tooling, and localization — that left you running to your laptop to learn more!</li>
+<li><strong>Bonus:</strong> Next door at Platform Engineering Day, <a href="https://uk.linkedin.com/in/samanthacoffman" target="_blank" rel="noopener noreferrer">Samantha Coffman</a> (Senior Product Manager, Spotify) was representing Backstage in her talk "<a href="https://www.youtube.com/watch?v=Z_KCOcoliLI&amp;list=PLj6h78yzYM2Me-TpMQFvCphDu_xm71ed_&amp;index=12" target="_blank" rel="noopener noreferrer">Boosting Developer Platform Teams with Product Thinking</a>".</li>
+</ul>
+<p>Beyond the talks, it was great to meet so many different members of the community, both those who've been using Backstage since the beginning as well as people who are just learning about internal developer portals and the open source platform. I had so many great conversations, I started to lose my voice — and it was only the first day.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="day-2-onward-to-kubecon--cloudnativecon">Day 2: Onward to KubeCon + CloudNativeCon<a href="https://backstage.io/blog/2024/03/27/backstagecon-kubecon-24#day-2-onward-to-kubecon--cloudnativecon" class="hash-link" aria-label="Direct link to Day 2: Onward to KubeCon + CloudNativeCon" title="Direct link to Day 2: Onward to KubeCon + CloudNativeCon">​</a></h2>
+<p>Backstage also took the spotlight at KubeCon. On Wednesday, project maintainers <a href="https://github.com/Rugvip" target="_blank" rel="noopener noreferrer">Patrik Oldsberg</a> (Senior Engineer, Spotify) and <a href="https://github.com/benjdlambert" target="_blank" rel="noopener noreferrer">Ben Lambert</a> (Senior Engineer, Spotify) gave us a great overview on “<a href="https://www.youtube.com/watch?v=jBf3g79xcf4" target="_blank" rel="noopener noreferrer">The State of Backstage in 2024</a>” to a packed audience. Highlights from their talk include:</p>
+<ul>
+<li><strong>New project areas:</strong> There are now project areas for Community Plugins, Notifications, and the Scaffolder</li>
+<li><strong>BEPs (Backstage enhancement proposals):</strong> This is a new formal proposal process that allows a more iterative approach then trying to use GitHub Issues as RFCs</li>
+<li><strong>Core framework:</strong> They gave updates on the new auth changes to be secure by default, as well as updates on the New Backend System and New Frontend System</li>
+<li><strong>The future:</strong> Dynamic features! This allows you to install new plugins without having to rebuild</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="day-3-community-community-community">Day 3: Community, community, community!<a href="https://backstage.io/blog/2024/03/27/backstagecon-kubecon-24#day-3-community-community-community" class="hash-link" aria-label="Direct link to Day 3: Community, community, community!" title="Direct link to Day 3: Community, community, community!">​</a></h2>
+<p>To top things off, during his <a href="https://www.youtube.com/watch?v=MICHGBAe8gc&amp;list=PLj6h78yzYM2N8nw1YcqqKveySH6_0VnI0&amp;index=161" target="_blank" rel="noopener noreferrer">CNCF Keynote</a> on Thursday morning, <a href="https://www.cncf.io/people/staff/?p=taylor-dolezal" target="_blank" rel="noopener noreferrer">Taylor Dolezal</a> (Head of Ecosystem, The Linux Foundation) shared what should be an unsurprising stat for members of the community: Backstage is the top CNCF project by end user commits!</p>
+<p><img decoding="async" loading="lazy" alt="CNCF Keynote, KubeCon + CloudNativeCon Europe 2024" src="https://backstage.io/assets/images/cncf-keynote-kubecon-2024-6b5b54b50be25b9639a795634436f65f.jpg" width="1500" height="844" class="img_ev3q">
+Top 10 CNCF Projects by Number of End User Commits</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="day-4-au-revoir-see-you-at-the-next-one">Day 4: Au revoir! See you at the next one!<a href="https://backstage.io/blog/2024/03/27/backstagecon-kubecon-24#day-4-au-revoir-see-you-at-the-next-one" class="hash-link" aria-label="Direct link to Day 4: Au revoir! See you at the next one!" title="Direct link to Day 4: Au revoir! See you at the next one!">​</a></h2>
+<p><img decoding="async" loading="lazy" alt="BackstageCon and KubeCon + CloudNativeCon Europe 2024" src="https://backstage.io/assets/images/backstagecon-kubecon-europe-2024-a26abe3fba4de529d84ce6fb4e641cd5.gif" width="800" height="600" class="img_ev3q"></p>
+<p>You can catch up on all the talks from <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2P4KPyeDFexAVm6ZvfAWMU8" target="_blank" rel="noopener noreferrer">BackstageCon</a> and the rest of the week on the <a href="https://www.youtube.com/@cncf/playlists" target="_blank" rel="noopener noreferrer">CNCF's YouTube channel</a>. See you in Salt Lake City in November at KubeCon + CloudNativeCon North America!</p>]]></content>
+        <author>
+            <name>André Wanlin, Spotify</name>
+            <uri>https://github.com/awanlin</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CVE-2024-26150: Keeping Backstage safe and secure]]></title>
+        <id>https://backstage.io/blog/2024/02/28/security-notice</id>
+        <link href="https://backstage.io/blog/2024/02/28/security-notice"/>
+        <updated>2024-02-28T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[TL;DR: For the Backstage maintainers, ensuring that the project is secure for every adopter and end user is one of our top priorities.]]></summary>
+        <content type="html"><![CDATA[<p><strong>TL;DR</strong>: For the Backstage maintainers, ensuring that the project is secure for every adopter and end user is one of our top priorities.
+With the recent discovery of <a href="https://www.cve.org/CVERecord?id=CVE-2024-26150" target="_blank" rel="noopener noreferrer">CVE-2024-26150</a>, we've shipped fixes for versions &gt; v1.15.0.
+Please update your Backstage instance.</p>
+<p><img decoding="async" loading="lazy" alt="Backstage Security Audit &amp;amp; Updates" src="https://backstage.io/assets/images/backstage-security-audit-d0283e8fb2fc980642fd9b4be7057cf5.png" width="1200" height="630" class="img_ev3q"></p>
+<!-- -->
+<p>Last week we were notified by <a href="https://roadie.io/" target="_blank" rel="noopener noreferrer">Roadie</a> of a potential security vulnerability in the scaffolder that they had discovered during a third-party security audit.
+Roadie are running their scaffolder tasks in an isolated, ephemeral container to mitigate these kinds of issues, but as good citizens of the Backstage community, they alerted the Backstage maintainer team to make sure a fix was applied to the upstream project.
+Upon further investigation, it turned out that this was a more widespread issue with the <code>resolveSafeChildPath</code> utility from the <code>@backstage/backend-common</code> package, which is used to prevent path traversal exploits.
+This issue has now been fixed, and also backported to cover releases up to almost a year old.</p>
+<p>Please make sure that you have updated your Backstage instance to the latest v.1.23.2, or that you are using <code>@backstage/backend-common</code> <code>v0.21.1</code>, <code>v0.19.10</code>, or <code>v0.20.2</code>.
+If you are building backend plugins for Backstage and do any local file operations, make sure you use the <code>resolveSafeChildPath</code> utility, as this check is quite tricky to implement correctly 😊</p>
+<p>Thanks to Roadie and the team for reporting this issue, and making the Backstage community safe!</p>
+<p>For more information you can check out the <a href="https://github.com/backstage/backstage/security/advisories/GHSA-2fc9-xpp8-2g9h" target="_blank" rel="noopener noreferrer">security advisory</a>.</p>]]></content>
+        <author>
+            <name>Ben Lambert, Spotify &amp; Sam Nixon, Roadie</name>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Wrap up: BackstageCon ‘23, KubeCon + Cloud Native NA]]></title>
         <id>https://backstage.io/blog/2023/11/15/backstagecon-kubecon-23</id>
@@ -14,8 +423,8 @@
         <updated>2023-11-15T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[BackstageCon ‘23, KubeCon + Cloud Native NA]]></summary>
         <content type="html"><![CDATA[<p><img decoding="async" loading="lazy" alt="BackstageCon ‘23, KubeCon + Cloud Native NA" src="https://backstage.io/assets/images/00-cover-af1761cb266264d9f6b4ce6b66fa359f.png" width="1667" height="875" class="img_ev3q"></p>
-<p>tl;dr BackstageCon North America is officially in the books! We had a blast in Chicago talking about Backstage non-stop throughout the week at both BackstageCon and KubeCon. If you weren't able to join us, the <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc" target="_blank" rel="noopener noreferrer">BackstageCon talks are available</a> for replay on the CNCF YouTube channel.
-{/* truncate */}</p>
+<p>tl;dr BackstageCon North America is officially in the books! We had a blast in Chicago talking about Backstage non-stop throughout the week at both BackstageCon and KubeCon. If you weren't able to join us, the <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2PxiInfZi2OKu1KluNfbLtc" target="_blank" rel="noopener noreferrer">BackstageCon talks are available</a> for replay on the CNCF YouTube channel.</p>
+<!-- -->
 <p>Obviously we're biased, but Backstage was definitely one of the big topics at <a href="https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/" target="_blank" rel="noopener noreferrer">KubeCon + CloudNativeCon North America</a> this year. Recently, the CNCF announced that Backstage was the <a href="https://www.cncf.io/blog/2023/10/27/october-2023-where-we-are-with-velocity-of-cncf-lf-and-top-30-open-source-projects/" target="_blank" rel="noopener noreferrer">third fastest-growing project</a> of the year (up from the fifth last year). And you could confirm it with your own eyes during BackstageCon and KubeCon: hundreds of people flocked through the event, talks, and the project booth sharing their enthusiasm and asking more questions about the project.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="backstagecon-a-growing-community">BackstageCon: A growing community&nbsp;<a href="https://backstage.io/blog/2023/11/15/backstagecon-kubecon-23#backstagecon-a-growing-community" class="hash-link" aria-label="Direct link to BackstageCon: A growing community&nbsp;" title="Direct link to BackstageCon: A growing community&nbsp;">​</a></h3>
 <p>With a whopping peak attendance of 400+ people, the crowd nearly doubled from last year,<a href="https://www.forbes.com/sites/janakirammsv/2023/11/14/backstage-project-takes-center-stage-at-kubecon-north-america-2023/?sh=1972303a6539" target="_blank" rel="noopener noreferrer"> taking the center stage of the conference</a>, as reported by Forbes. For some, BackstageCon was their first entry point into the community, but the event also boasted lots of&nbsp; familiar faces, mostly from some of the most mature adopters such as Dynatrace, Lunar, and US Bank. We also got to hear from new voices in the community like Comcast and Grafana Labs.</p>
@@ -67,7 +476,7 @@
         <summary type="html"><![CDATA[backstage header]]></summary>
         <content type="html"><![CDATA[<p><img decoding="async" loading="lazy" alt="backstage header" src="https://backstage.io/assets/images/header-92af1a87140c1ca77cef9d6dfea15779.png" width="1200" height="630" class="img_ev3q"></p>
 <p><strong><em>TL;DR <a href="https://www.chicagotrading.com/" target="_blank" rel="noopener noreferrer">Chicago Trading Company</a> (CTC) adopted Backstage ten months ago to help reduce onboarding frictions with their new cloud-based DevOps Kubernetes platform. Through templatization and open feedback loops, the team has conservatively saved 18 months of developer time to date with Backstage. We spoke with CTC DevOps engineer <a href="https://github.com/scott-kausler" target="_blank" rel="noopener noreferrer">Scott Kausler</a> who shared the details of their onboarding journey, lessons learned, and insights for other Backstage adopters.</em></strong></p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="templates-or-the-cluster-didnt-happen">Templates or the cluster didn't happen<a href="https://backstage.io/blog/2023/09/29/chicago-traiding-company-adopter-spotlight#templates-or-the-cluster-didnt-happen" class="hash-link" aria-label="Direct link to Templates or the cluster didn't happen" title="Direct link to Templates or the cluster didn't happen">​</a></h2>
 <p>While mid-activation on a new cloud-based DevOps Kubernetes platform, Scott's team received early feedback that it was difficult to onboard teams onto this platform due to the breadth of requirements and new tools developers needed — from dependency management tools (such as Gradle, Conan, and Conda) to Docker/Kubernetes, Helm/FluxCD, and Vault. Not only were CTC developers required to learn new systems to build, package, and deploy their apps, in several cases even the code needed to be changed. There were also significant modifications required to existing tools such as Jenkins.</p>
 <p>Scott's team quickly recognized that this friction could lead to lower adoption and longer onboarding times to the new platform. So he started investigating solutions that would allow him to templatize these new services and create turnkey onboarding with less reference knowledge required.</p>
@@ -108,7 +517,7 @@
 We're grateful to the Expedia Group team for sharing their processes, revised proof of value metrics, and adaptations to their approach over time in hopes of providing a successful framework for the rest of the Backstage community.</em></p>
 <p><a href="https://expediagroup.com/" target="_blank" rel="noopener noreferrer">Expedia Group's</a> mission is to power global travel for everyone, everywhere.
 This vision is made possible through Expedia Group's massive platform, which connects 168 million loyalty members, 50 thousand B2B partners, 3 million properties and 500 airlines, car rentals and cruise lines across the globe. In short, the scale of our platform is enormous, which means that we need to scale our engineering capabilities as well so we can continue to provide seamless experiences to our travelers and partners.</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <p>In August 2020, we adopted Backstage to enhance our foundational platform capabilities and reduce developer friction in the process. Its framework proved scalable for us and as EG's platform evolved, so did our application of Backstage. Since our <a href="https://backstage.spotify.com/blog/measuring-backstage-proof-of-value-at-expedia/" target="_blank" rel="noopener noreferrer">initial share about our Backstage deployment</a>, we've continued to follow our process of:</p>
 <ul>
 <li>Syncing Expedia Group's internal Developer Journey phases by key DevOps processes and Software Delivery Life Cycle (SDLC) milestones (POC, Alpha, Beta, etc).</li>
@@ -121,168 +530,26 @@ This vision is made possible through Expedia Group's massive platform, which con
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="expedia-group-proof-of-value-metrics-20">Expedia Group proof of value metrics 2.0<a href="https://backstage.io/blog/2023/08/17/expedia-proof-of-value-metrics-2#expedia-group-proof-of-value-metrics-20" class="hash-link" aria-label="Direct link to Expedia Group proof of value metrics 2.0" title="Direct link to Expedia Group proof of value metrics 2.0">​</a></h2>
 <p>We are excited to share our PoV metrics because it affirms our investment in Backstage for Expedia Group's Backstage users and provides a compelling metrics-based answer on why more organizations should consider adopting it.</p>
 <p>As our Backstage application matured, we updated our PoV metrics and aligned our 2023 roadmap to reflect these changes. Below, we highlight key wins from 2022 and outline our long-term vision for each metric.</p>
-<table>
-  <thead>
-    <tr>
-      <th>PoV Metric</th>
-      <th>Description</th>
-      <th>2022 Key Win(s)</th>
-      <th>Long-Term Vision</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>"Ship on Day One" / onboarding metrics</td>
-      <td>
-        <p>
-          A metric used to determine an engineer's readiness to develop at EG
-          during their onboarding process.
-        </p>
-        <p>
-          It measures the time from first commit to deploying code in
-          production, using a "Hello World Template"
-        </p>
-      </td>
-      <td>
-        <ul>
-          <li>
-            850+ engineers went through the “Ship on Day One” Bootcamp when
-            first joining Expedia Group
-          </li>
-          <li>
-            We had a success rate of ~95% of engineers completing bootcamp on
-            first try
-          </li>
-          <li>7,000+ components created or onboarded</li>
-          <li>4-min average per app creation/onboarding</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>
-            Develop full onboarding curriculum coverage for all critical
-            capabilities offered within EG - Example: performance and quality
-            management, pipeline management, etc.
-          </li>
-          <li>
-            Create an end-to-end guided tour of the EG Developer Journey w/
-            functional training
-          </li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Reduce context switching through integration with core EG capabilities
-      </td>
-      <td>
-        Through plugins, tool integration, reduces context-switching as
-        engineers will not need to toggle between multiple tools
-      </td>
-      <td>
-        <ul>
-          <li>
-            15%+ of internal developer tools are integrated within Backstage,
-            reducing the amount of context-switching needed
-          </li>
-          <li>
-            4000+ unique users using Backstage for ~20 min on average a day.
-          </li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>
-            End-to-end integration with EG paved road tools and Backstage to
-            support increased developer productivity
-          </li>
-          <li>
-            Drive broader adoption to have all EG employees using Backstage to
-            manage their SDLC and to build internal UIs using plugins
-          </li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>Improve search results relevance</td>
-      <td>
-        Intuitive search capabilities to surface relevant Backstage content like
-        TechDocs, entities, tools, etc.
-      </td>
-      <td>
-        <ul>
-          <li>Enabled global search functionality throughout Backstage</li>
-          <li>
-            <p>Contributed to the open source Backstage Search platform</p>
-          </li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Engine optimization/ranking improvement</li>
-          <li>Visualize key search metrics to support improvements</li>
-          <li>Chat + AI integration with chat-based interfaces</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>Technical documentation reach</td>
-      <td>
-        Number of developers leveraging TechDocs for all services within EG
-      </td>
-      <td>
-        <ul>
-          <li>500+ services tied with TechDocs</li>
-          <li>50,000+ average monthly TechDoc views</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>
-            All Backstage entities leveraging TechDocs to enable a centralized
-            documentation portal integrated with the Software Catalog
-          </li>
-          <li>
-            Quality/governance and gamification to support users and
-            contributors
-          </li>
-          <li>
-            More TechDocs and mkdocs add-ons to compliment the core capabilities
-            and drive usability of documentation on Backstage
-          </li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>Developer Experience community engagement</td>
-      <td>Enhance Backstage through community engagement</td>
-      <td>
-        <ul>
-          <li>
-            Diverse contributions to Backstage open source focused on search and
-            discovery - 10+
-          </li>
-          <li>Community engagement through internal case studies, and blogs</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>
-            Continuous contributions to open-source Backstage, focused on plugin
-            administration, driving documentation adoption, and improved UX
-            around core capabilities
-          </li>
-          <li>
-            Strategic community engagements to enhance the platform's usability
-            and long-term confidence in adopting Backstage
-          </li>
-          <li>
-            Event participation and storytelling around EG's Backstage journey
-          </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody></table>
+<table><thead><tr><th>PoV Metric</th><th>Description</th><th>2022 Key Win(s)</th><th>Long-Term Vision</th></tr></thead><tbody><tr><td>"Ship on Day One" / onboarding metrics</td><td><p></p><p>A metric used to determine an engineer's readiness to develop at EG
+during their onboarding process.</p><p></p><p></p><p>It measures the time from first commit to deploying code in
+production, using a "Hello World Template"</p><p></p></td><td><ul><li><p>850+ engineers went through the “Ship on Day One” Bootcamp when
+first joining Expedia Group</p></li><li><p>We had a success rate of ~95% of engineers completing bootcamp on
+first try</p></li><li>7,000+ components created or onboarded</li><li>4-min average per app creation/onboarding</li></ul></td><td><ul><li><p>Develop full onboarding curriculum coverage for all critical
+capabilities offered within EG - Example: performance and quality
+management, pipeline management, etc.</p></li><li><p>Create an end-to-end guided tour of the EG Developer Journey w/
+functional training</p></li></ul></td></tr><tr><td><p>Reduce context switching through integration with core EG capabilities</p></td><td><p>Through plugins, tool integration, reduces context-switching as
+engineers will not need to toggle between multiple tools</p></td><td><ul><li><p>15%+ of internal developer tools are integrated within Backstage,
+reducing the amount of context-switching needed</p></li><li><p>4000+ unique users using Backstage for ~20 min on average a day.</p></li></ul></td><td><ul><li><p>End-to-end integration with EG paved road tools and Backstage to
+support increased developer productivity</p></li><li><p>Drive broader adoption to have all EG employees using Backstage to
+manage their SDLC and to build internal UIs using plugins</p></li></ul></td></tr><tr><td>Improve search results relevance</td><td><p>Intuitive search capabilities to surface relevant Backstage content like
+TechDocs, entities, tools, etc.</p></td><td><ul><li>Enabled global search functionality throughout Backstage</li><li><p>Contributed to the open source Backstage Search platform</p></li></ul></td><td><ul><li>Engine optimization/ranking improvement</li><li>Visualize key search metrics to support improvements</li><li>Chat + AI integration with chat-based interfaces</li></ul></td></tr><tr><td>Technical documentation reach</td><td><p>Number of developers leveraging TechDocs for all services within EG</p></td><td><ul><li>500+ services tied with TechDocs</li><li>50,000+ average monthly TechDoc views</li></ul></td><td><ul><li><p>All Backstage entities leveraging TechDocs to enable a centralized
+documentation portal integrated with the Software Catalog</p></li><li><p>Quality/governance and gamification to support users and
+contributors</p></li><li><p>More TechDocs and mkdocs add-ons to compliment the core capabilities
+and drive usability of documentation on Backstage</p></li></ul></td></tr><tr><td>Developer Experience community engagement</td><td>Enhance Backstage through community engagement</td><td><ul><li><p>Diverse contributions to Backstage open source focused on search and
+discovery - 10+</p></li><li>Community engagement through internal case studies, and blogs</li></ul></td><td><ul><li><p>Continuous contributions to open-source Backstage, focused on plugin
+administration, driving documentation adoption, and improved UX
+around core capabilities</p></li><li><p>Strategic community engagements to enhance the platform's usability
+and long-term confidence in adopting Backstage</p></li><li><p>Event participation and storytelling around EG's Backstage journey</p></li></ul></td></tr></tbody></table>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="ymmv-your-metrics-may-vary">YMMV: Your Metrics May Vary!<a href="https://backstage.io/blog/2023/08/17/expedia-proof-of-value-metrics-2#ymmv-your-metrics-may-vary" class="hash-link" aria-label="Direct link to YMMV: Your Metrics May Vary!" title="Direct link to YMMV: Your Metrics May Vary!">​</a></h2>
 <p>Measuring the value of Backstage will vary depending on your organization's needs and priorities. As an early adopter of Backstage, we hope the Expedia Group PoV metrics provide a helpful framework for understanding how Backstage can be used to improve developer productivity, collaboration, and knowledge sharing.</p>
 <p>We look forward to sharing future updates with the community as we continue to embrace a continuous improvement approach to Backstage. If you missed it, you can read about where we started in our <a href="https://backstage.spotify.com/blog/measuring-backstage-proof-of-value-at-expedia/" target="_blank" rel="noopener noreferrer">initial proof of value metrics</a> back in 2021.</p>
@@ -301,7 +568,7 @@ This vision is made possible through Expedia Group's massive platform, which con
         <content type="html"><![CDATA[<p><img decoding="async" loading="lazy" alt="backstage header" src="https://backstage.io/assets/images/header-96abda0eb0018d6cef5a8c9244ae57af.png" width="1200" height="630" class="img_ev3q"></p>
 <p>At <a href="https://frontside.com/" target="_blank" rel="noopener noreferrer">Frontside</a>, our goal is to help cloud-native teams create cohesive development experiences. We've been at the Backstage party since the beginning helping companies adopt and extend Backstage to fit the needs of their unique ecosystems.</p>
 <p>Through our experience, we've uncovered five common traits of organizations that have improved developer experience through successful Backstage implementation and adoption. In this blog, we'll dive into these traits with some thoughts on how you can follow their blueprint.</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="1-they-take-a-product-centric-approach"><strong>1) They take a product-centric approach</strong><a href="https://backstage.io/blog/2023/07/28/frontside-adopter-post#1-they-take-a-product-centric-approach" class="hash-link" aria-label="Direct link to 1-they-take-a-product-centric-approach" title="Direct link to 1-they-take-a-product-centric-approach">​</a></h2>
 <p>The biggest factor for successful adopters of Backstage is their approach. There is a high correlation of success within organizations that approach building a developer portal like they're building a product. Some organizations will jump straight into solutioning instead of taking their time to identify what the problems are, how they affect users, and how those issues can be addressed.</p>
 <p>The team building out Backstage should assess or work from existing insights on the core challenges that developers are facing in their organization — both qualitative and quantitative data counts here — and connect those issues to a product roadmap with initial use cases and adoption milestones marked. By doing their research in advance, successful orgs have a clear vision of what they want to accomplish with their Backstage instance. They know exactly what goals need to be met and have pressure-tested potential issues and barriers.</p>
@@ -333,7 +600,7 @@ This vision is made possible through Expedia Group's massive platform, which con
         <summary type="html"><![CDATA[backstage header]]></summary>
         <content type="html"><![CDATA[<p><img decoding="async" loading="lazy" alt="backstage header" src="https://backstage.io/assets/images/banner-3aedcaa1bd84c0d0e2fa33535f2fc651.png" width="1200" height="630" class="img_ev3q"></p>
 <p><strong>TL;DR</strong>: Monitoring the health of a software application goes beyond surfacing API errors and customer-facing issues. It requires a comprehensive understanding of every facet of a service, including process metrics like DORA, as well as clear ownership of services and processes. By implementing Elevate as an internal developer portal, development teams now have better visibility of ownership in the distributed systems they work in. They also have the benefit of consolidated application health data and other metrics gained from the SaaS products they utilize everyday. This approach ensures a “single pane of glass” for application ownership and health so our teams can focus on building products and features that help our customers invest for a prosperous future.</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <p>At <a href="https://backstage.io/blog/2023/07/08/stash.com">Stash</a>, our mission is to give people the confidence to invest for a better life. Our app simplifies investing for the middle class who may be less experienced with traditional investing and retirement planning. Our customers trust us with their money, and with that, rely on us to provide a responsive and quality experience that works every time.</p>
 <p>It isn't revolutionary to say that monitoring the health of a software application is critical for ensuring its reliability and performance in service of customers' needs. However, in a distributed architecture like microservices, tracking ownership and monitoring application health across the system quickly becomes complex. The difficulties are further compounded when leveraging multiple SaaS products, which is common in modern development but specifically so for fintechs like Stash that integrate best-of-breed software in novel ways, as we do across our platform.</p>
 <p>What we found is that there are ways to make sense of these complex systems by tracking DevOps Research and Assessment (DORA) metrics for applications and leveraging SaaS products to create a central hub to understand the <em>true</em> health of an application.</p>
@@ -418,7 +685,7 @@ This vision is made possible through Expedia Group's massive platform, which con
         <summary type="html"><![CDATA[TL;DR: For the Backstage maintainers, ensuring that the project is highly secure for every adopter and end-user is one of our top priorities. With the recent vulnerabilities in the vm2 sandbox we have decided to move away from vm2 and use isolated-vm instead, in order to ensure the security of the Backstage end-users.]]></summary>
         <content type="html"><![CDATA[<p><strong>TL;DR</strong>: For the Backstage maintainers, ensuring that the project is highly secure for every adopter and end-user is one of our top priorities. With the recent vulnerabilities in the <code>vm2</code> sandbox we have decided to move away from <code>vm2</code> and use <code>isolated-vm</code> instead, in order to ensure the security of the Backstage end-users.</p>
 <p><img decoding="async" loading="lazy" alt="Backstage Security Audit &amp;amp; Updates" src="https://backstage.io/assets/images/backstage-security-audit-d0283e8fb2fc980642fd9b4be7057cf5.png" width="1200" height="630" class="img_ev3q"></p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="a-quick-download-on-templating-strings">A quick download on templating strings<a href="https://backstage.io/blog/2023/06/21/switching-out-sandbox#a-quick-download-on-templating-strings" class="hash-link" aria-label="Direct link to A quick download on templating strings" title="Direct link to A quick download on templating strings">​</a></h2>
 <p>When using <a href="https://backstage.io/docs/features/software-templates" target="_blank" rel="noopener noreferrer">Software Templates</a>, we allow template authors to <a href="https://backstage.io/docs/features/software-templates/writing-templates/#the-templating-syntax" target="_blank" rel="noopener noreferrer">write advanced templating strings</a> when composing actions together like the following:</p>
 <div class="language-yaml codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#9CDCFE;--prism-background-color:#232323"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-yaml codeBlock_bY9V thin-scrollbar" style="color:#9CDCFE;background-color:#232323"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#9CDCFE"><span class="token punctuation" style="color:rgb(212, 212, 212)">-</span><span class="token plain"> </span><span class="token key atrule">id</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"> template</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">  </span><span class="token key atrule">name</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"> Fetch Skeleton + Template</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">  </span><span class="token key atrule">action</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"> fetch</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain">template</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">  </span><span class="token key atrule">input</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"></span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">    </span><span class="token key atrule">url</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"> ./skeleton</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">    </span><span class="token key atrule">copyWithoutRender</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"></span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">      </span><span class="token punctuation" style="color:rgb(212, 212, 212)">-</span><span class="token plain"> .github/workflows/*</span><br></span><span class="token-line" style="color:#9CDCFE"><span class="token plain">    </span><span class="token key atrule">values</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"></span><br></span><span class="token-line code-block-highlight-line" style="color:#9CDCFE"><span class="token plain">      </span><span class="token key atrule">component_id</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"> $</span><span class="token punctuation" style="color:rgb(212, 212, 212)">{</span><span class="token punctuation" style="color:rgb(212, 212, 212)">{</span><span class="token plain"> parameters.component_id </span><span class="token punctuation" style="color:rgb(212, 212, 212)">}</span><span class="token punctuation" style="color:rgb(212, 212, 212)">}</span><span class="token plain"></span><br></span><span class="token-line code-block-highlight-line" style="color:#9CDCFE"><span class="token plain">      </span><span class="token key atrule">description</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"> $</span><span class="token punctuation" style="color:rgb(212, 212, 212)">{</span><span class="token punctuation" style="color:rgb(212, 212, 212)">{</span><span class="token plain"> parameters.description </span><span class="token punctuation" style="color:rgb(212, 212, 212)">}</span><span class="token punctuation" style="color:rgb(212, 212, 212)">}</span><span class="token plain"></span><br></span><span class="token-line code-block-highlight-line" style="color:#9CDCFE"><span class="token plain">      </span><span class="token key atrule">destination</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"> $</span><span class="token punctuation" style="color:rgb(212, 212, 212)">{</span><span class="token punctuation" style="color:rgb(212, 212, 212)">{</span><span class="token plain"> parameters.repoUrl </span><span class="token punctuation" style="color:rgb(212, 212, 212)">|</span><span class="token plain"> parseRepoUrl </span><span class="token punctuation" style="color:rgb(212, 212, 212)">}</span><span class="token punctuation" style="color:rgb(212, 212, 212)">}</span><span class="token plain"></span><br></span><span class="token-line code-block-highlight-line" style="color:#9CDCFE"><span class="token plain">      </span><span class="token key atrule">owner</span><span class="token punctuation" style="color:rgb(212, 212, 212)">:</span><span class="token plain"> $</span><span class="token punctuation" style="color:rgb(212, 212, 212)">{</span><span class="token punctuation" style="color:rgb(212, 212, 212)">{</span><span class="token plain"> parameters.owner </span><span class="token punctuation" style="color:rgb(212, 212, 212)">}</span><span class="token punctuation" style="color:rgb(212, 212, 212)">}</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
@@ -460,7 +727,7 @@ The <code>isolated-vm</code> repo has <a href="https://github.com/laverdet/isola
         <content type="html"><![CDATA[<p><em>This blog post is co-authored by Emma White (<a href="https://github.com/ewhite1997" target="_blank" rel="noopener noreferrer">@ewhite1997</a>), Spotify.</em></p>
 <p><img decoding="async" loading="lazy" alt="Backstage Deploy banner" src="https://backstage.io/assets/images/Welcome-Backstage-Deploy-951eb8990a99cd89400cb7d9b2c178e9.png" width="738" height="415" class="img_ev3q"></p>
 <p>TL;DR: Backstage released a new CLI earlier this year as part of a <a href="https://github.com/backstage/backstage-deploy" target="_blank" rel="noopener noreferrer">new Backstage project</a>. This new capability allows early adopters to deploy their Backstage proof of concept faster than before. In this blog, you’ll learn a little bit more about the Deploy CLI and how you can get started with it.</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="why-backstage-deploy">Why Backstage Deploy<a href="https://backstage.io/blog/2023/05/06/backstage-deploy-alpha#why-backstage-deploy" class="hash-link" aria-label="Direct link to Why Backstage Deploy" title="Direct link to Why Backstage Deploy">​</a></h2>
 <p>We’ve heard from Backstage adopters that before reaching widespread adoption at their organizations, teams test out a Backstage proof of concept (POC). To create the POC, teams scaffold an instance, set up the catalog, and change the UI to suit their company’s branding. Once these milestones are completed, there's just one last step before showing off the awesomeness of a Backstage POC internally... deploying the Backstage POC from a local machine to the cloud. This final step often introduces a lot of questions that attempt to determine the easiest and fastest way to do that.</p>
 <p>Let’s say you’re at this last step: your POC is ready for deployment, but you have some lingering questions.</p>
@@ -507,13 +774,13 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <summary type="html"><![CDATA[KubeCon CloudNativeCon Europe 2023 banner]]></summary>
         <content type="html"><![CDATA[<p><img decoding="async" loading="lazy" alt="KubeCon CloudNativeCon Europe 2023 banner" src="https://backstage.io/assets/images/Backstage_News_3-7-23_KubeCon-1dd81577fd9d32d74556788871b49b6e.png" width="973" height="511" class="img_ev3q"></p>
 <p>We had a blast talking all things Backstage at KubeCon EU 2023 in Amsterdam last week. In case you missed it, here’s a quick recap:</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="backstage-project-meeting">Backstage Project Meeting<a href="https://backstage.io/blog/2023/04/26/kubecon-eu-2023#backstage-project-meeting" class="hash-link" aria-label="Direct link to Backstage Project Meeting" title="Direct link to Backstage Project Meeting">​</a></h2>
 <p><img decoding="async" loading="lazy" alt="A packed room for the Backstage project meeting" src="https://backstage.io/assets/images/IMG_2522-7a7840942e7eb7aef401eb4b39a4090d.png" width="4032" height="3024" class="img_ev3q"></p>
 <p>On Tuesday the Backstage maintainers hosted a jam-packed project meeting. The community welcomed many teams and individuals that were early in their Backstage journey, either actively adopting, preparing for the POC phase, or learning about the capabilities of Backstage. Many of the newcomers were eager to learn about how Backstage could help streamline their development workflows and improve developer productivity. During the project meeting, the maintainers covered a “day in the life” of a core maintainer, walked through spinning up a new instance of Backstage in a live demo, and opened it up to questions from the community. It’s super exciting to see so much growing interest in Backstage and all of the ways adopters are adapting it to their needs.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="state-of-backstage-in-2023">State of Backstage in 2023<a href="https://backstage.io/blog/2023/04/26/kubecon-eu-2023#state-of-backstage-in-2023" class="hash-link" aria-label="Direct link to State of Backstage in 2023" title="Direct link to State of Backstage in 2023">​</a></h2>
 <p><img decoding="async" loading="lazy" alt="Patrik and Ben onstage for the State of Backstage talk" src="https://backstage.io/assets/images/IMG_0120-e48f024139019c95c4b7394e89ed83cf.png" width="1024" height="683" class="img_ev3q"></p>
-<p>Core maintainers <a href="https://github.com/benjdlambert" target="_blank" rel="noopener noreferrer">Ben Lambert</a> and <a href="https://github.com/Rugvip" target="_blank" rel="noopener noreferrer">Patrik Oldsberg</a> took center stage on Wednesday for the Backstage Maintainer Track: State of Backstage in 2023 talk. Backstage has officially hit over 1,000 adopters and 1,000 contributors – so it’s apt timing to modernize the governance model for the project. Taking pointers from the <a href="https://contribute.cncf.io/maintainers/templates/" target="_blank" rel="noopener noreferrer">CNCF Contributor Ladder Governance Template</a>, a new <a href="https://github.com/backstage/backstage/blob/master/GOVERNANCE.md" target="_blank" rel="noopener noreferrer">Backstage Governance Model</a> is now in effect! Patrik walked us through the new ladder model which introduces a number of changes, one being the addition of <a href="https://github.com/backstage/backstage/blob/master/GOVERNANCE.md#project-area-maintainer" target="_blank" rel="noopener noreferrer">project area maintainers</a>. This role lets members of the community take increased ownership over a specific area of interest, like Catalog, Discoverability, TechDocs, Helm Charts, and Kubernetes. New project areas that will be added include Permissions and Software Templates. New project areas can be proposed by nominating a project area maintainer for the area. The new model also adds an organization member role for contributors who want to take a more active role in the Backstage community. You can open an issue to become an organization member <a href="https://github.com/backstage/community/issues/new/choose" target="_blank" rel="noopener noreferrer">here</a>.</p>
+<p>Core maintainers <a href="https://github.com/benjdlambert" target="_blank" rel="noopener noreferrer">Ben Lambert</a> and <a href="https://github.com/Rugvip" target="_blank" rel="noopener noreferrer">Patrik Oldsberg</a> took center stage on Wednesday for the Backstage Maintainer Track: State of Backstage in 2023 talk. Backstage has officially hit over 1,000 adopters and 1,000 contributors – so it’s apt timing to modernize the governance model for the project. Taking pointers from the <a href="https://contribute.cncf.io/maintainers/templates/" target="_blank" rel="noopener noreferrer">CNCF Contributor Ladder Governance Template</a>, a new <a href="https://github.com/backstage/community/blob/main/GOVERNANCE.md" target="_blank" rel="noopener noreferrer">Backstage Governance Model</a> is now in effect! Patrik walked us through the new ladder model which introduces a number of changes, one being the addition of <a href="https://github.com/backstage/community/blob/main/GOVERNANCE.md#project-area-maintainer" target="_blank" rel="noopener noreferrer">project area maintainers</a>. This role lets members of the community take increased ownership over a specific area of interest, like Catalog, Discoverability, TechDocs, Helm Charts, and Kubernetes. New project areas that will be added include Permissions and Software Templates. New project areas can be proposed by nominating a project area maintainer for the area. The new model also adds an organization member role for contributors who want to take a more active role in the Backstage community. You can open an issue to become an organization member <a href="https://github.com/backstage/community/issues/new/choose" target="_blank" rel="noopener noreferrer">here</a>.</p>
 <p><img decoding="async" loading="lazy" alt="Contributor ladder" src="https://backstage.io/assets/images/contributor_ladder-d93202ae2e6cfe92c23405e59925a4a6.png" width="2114" height="1034" class="img_ev3q"></p>
 <p>Ben and Patrik also covered new capabilities for Software Templates and framework updates. Lots of exciting new features are planned for Software Templates including a new UI, async validation for CustomFieldExtensions, and embedded workflows. Lastly, the maintainers also announced a new focus on declarative integration – permitting plugin installation without TypeScript. Development is still early, but we can’t wait to see this in action!</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="other-kubecon-excitement">Other KubeCon excitement!<a href="https://backstage.io/blog/2023/04/26/kubecon-eu-2023#other-kubecon-excitement" class="hash-link" aria-label="Direct link to Other KubeCon excitement!" title="Direct link to Other KubeCon excitement!">​</a></h2>
@@ -532,7 +799,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <summary type="html"><![CDATA[backstage turns 3 header image]]></summary>
         <content type="html"><![CDATA[<p><img decoding="async" loading="lazy" alt="backstage turns 3 header image" src="https://backstage.io/assets/images/birthday-783d826731d49f5d80b58506b13a85ba.gif" width="800" height="450" class="img_ev3q"></p>
 <p><strong>TL;DR</strong> Spotify released Backstage into open source three years ago today. Since then, the community has grown by leaps and bounds to stretch across the globe (and the Discord server!). Now that Backstage is a threenager, the growing pains are real. So, on this birthday, we want to cover our collective efforts to make it easier to adopt and contribute to Backstage.</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="they-grow-up-so-fast-dont-they">They grow up so fast, don’t they?<a href="https://backstage.io/blog/2023/03/15/backstage-turns-3#they-grow-up-so-fast-dont-they" class="hash-link" aria-label="Direct link to They grow up so fast, don’t they?" title="Direct link to They grow up so fast, don’t they?">​</a></h2>
 <p>Happy birthday, Backstage! Three years ago, Spotify released its homegrown developer portal into the wild after a small team collaborated on an internal Hack Week project. We’d had a lot of conversations with companies looking to build out something similar to what we’d been running for years, so our Hack Week sprint started as an experiment to see if the Backstage core plugins could be valuable in open source.</p>
 <p>It's cliché at this point — because we’ve said it a million times —&nbsp;but no one could have predicted what came next.</p>
@@ -549,9 +816,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
 </ul>
 <p>But, without a doubt, the best thing about the Backstage project is the people in this community. People who are curious, collaborative, and excited to share knowledge. People who’ll sift through Discord at all hours to answer questions and support one another. People who come from all over the world but share a common trait: being passionate about enabling developers to do their best work.</p>
 <p>Don’t take our word for it! Take a look at this birthday video we put together with a few community members.</p>
-<div position:="" overflow:="" width:="" paddingtop:="">
-  <iframe position:="" top:="" left:="" right:="" bottom:="" width:="" height:="" src="https://www.youtube.com/embed/rllOa_MfEWw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-</div>
+<div style="position:relative;overflow:hidden;width:100%;padding-top:56.25%"><iframe style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%" src="https://www.youtube.com/embed/rllOa_MfEWw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="the-growing-pains-are-real">The growing pains are real<a href="https://backstage.io/blog/2023/03/15/backstage-turns-3#the-growing-pains-are-real" class="hash-link" aria-label="Direct link to The growing pains are real" title="Direct link to The growing pains are real">​</a></h2>
 <p>But it's not all sunshine and roses in Backstage-land. If Year 1 was about getting this community going and Year 2 was focused on maturing the platform, then Year 3 needs to address some of the inevitable growing pains a project undergoes as it gains ground.</p>
 <p>We hear two things pretty consistently from the community:</p>
@@ -605,7 +870,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
 </blockquote>
 <p>For the past year, the Backstage maintainer team has been spending time to give the <a href="https://backstage.io/docs/plugins/backend-plugin" target="_blank" rel="noopener noreferrer">old Backstage backend system</a> a much needed revamp. Our goal was not to build something completely new from scratch, but rather to solidify the existing foundations that have grown organically. We wanted to make plugin installation a lot simpler, while maintaining and even improving the ways in which you can customize your backend setups.</p>
 <p>We’re happy to announce that the <a href="https://backstage.io/docs/releases/v1.11.0" target="_blank" rel="noopener noreferrer">v1.11</a> release includes the public alpha of the <a href="https://backstage.io/docs/backend-system/" target="_blank" rel="noopener noreferrer">new Backstage backend system</a>! The system has already been available to use for some time, as some of you have already found, but this alpha release marks the point where we are finally ready to encourage widespread adoption by plugin builders. We still don’t recommend that you use this new system in your production setups just yet, more on that later.</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="history-of-the-backstage-backend-system">History of the Backstage backend system<a href="https://backstage.io/blog/2023/02/15/backend-system-alpha#history-of-the-backstage-backend-system" class="hash-link" aria-label="Direct link to History of the Backstage backend system" title="Direct link to History of the Backstage backend system">​</a></h2>
 <p>The backend system that we all use today has grown very organically based on all the needs that have been discovered along the journey of the Backstage Open Source project. We started out with a very flexible system that was essentially just a collection of recommended patterns for plugins, along with a couple of common interfaces and utilities. This was largely due to the fact that before it was open sourced, the Backstage backend services at Spotify were all built on top of internal frameworks and practices that we couldn’t bring with us. Back in 2020, we didn’t have a lot of knowledge about what a good backend system for Backstage would look like, so we started off with a highly flexible foundation that would evolve organically over time.</p>
 <p>As Backstage grew across all dimensions of adopter count, community size, code size, and capability, we saw the need to take a step back and reevaluate how Backstage backend plugins are built. About one year ago, the maintainers sat down and started to sketch what a new backend system could look like.</p>
@@ -664,7 +929,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <summary type="html"><![CDATA[Fewer “vibes” and more climbs (up the contribution ladder)]]></summary>
         <content type="html"><![CDATA[<p><img decoding="async" loading="lazy" alt="Fewer “vibes” and more climbs (up the contribution ladder)" src="https://backstage.io/assets/images/whats-ahead-4348653ceceacc6df045883d0d479a5d.png" width="2500" height="1313" class="img_ev3q"></p>
 <p>Okay, everyone. Time to move on from all the 2022 reflections, Top 10 lists, and Wrapped(s), and turn our gaze in the other direction — towards 2023. As the Backstage team moves into the new year, we find ourselves asking those perennial questions: How can we continue to grow and enhance the Backstage community? How can we improve the experience for those adopting Backstage? How can we give the best support to Backstage contributors?</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <p>Well, we don’t have all the answers, but we do have some. So we wanted to share more on three ongoing initiatives aimed at moving the needle forward for these three distinct, yet interrelated, questions.</p>
 <ul>
 <li>Grow your influence by climbing the contribution ladder</li>
@@ -717,7 +982,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <summary type="html"><![CDATA[At the heart of Backstage is the Backstage Software Catalog, which is a data store that allows an organization to centralize and visualize its many software services and components. Backstage inspects and transforms an organization's disparate software services and parts into a centralized data store. This blog post introduces the concept of incremental entity providers, which allow Backstage to scale ingestion to even larger datasets.]]></summary>
         <content type="html"><![CDATA[<p>At the heart of <a href="https://backstage.io/" target="_blank" rel="noopener noreferrer">Backstage</a> is the <a href="https://backstage.io/docs/features/software-catalog/" target="_blank" rel="noopener noreferrer">Backstage Software Catalog</a>, which is a data store that allows an organization to centralize and visualize its many software services and components. Backstage inspects and transforms an organization's disparate software services and parts into a centralized data store. This blog post introduces the concept of incremental entity providers, which allow Backstage to scale ingestion to even larger datasets.</p>
 <p><img decoding="async" loading="lazy" alt="catalog pipeline" src="https://backstage.io/assets/images/catalog-pipeline-1c001702d710f795d338a19754eacfcf.png" width="451" height="241" class="img_ev3q"></p>
-<p>{/* truncate */}</p>
+<!-- -->
 <p>A common use case is for an organization to want to surface ownership and metadata about repositories. Backstage provides a mechanism for discovering and transforming repository information into a standard data structure and persisting it into the Backstage <a href="https://backstage.io/docs/features/software-catalog/" target="_blank" rel="noopener noreferrer">Catalog</a>. This process is known as ingestion, where all data is transformed into a standard Backstage data structure known as an entity. Entities in the Catalog’s data store are accessible to the Backstage App via the REST API.</p>
 <p>Data is transformed into entities via what is known as the ingestion and processing loop, which can be thought of as an <a href="https://en.wikipedia.org/wiki/Extract,_transform,_load" target="_blank" rel="noopener noreferrer">extract, transform and load (ETL) pipeline</a>, where raw data such as GitHub repositories are loaded from GitHub, transformed into entities and outputted to the Catalog.</p>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="entity-providers">Entity Providers<a href="https://backstage.io/blog/2023/01/31/incremental-entity-provider#entity-providers" class="hash-link" aria-label="Direct link to Entity Providers" title="Direct link to Entity Providers">​</a></h2>
@@ -750,7 +1015,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
 <p>If 2021 was the year of growth for the Backstage project and community, 2022 can be easily defined as the year of maturity. Both the project and the community continued to grow at an incredible pace and the platform is now more stable, more secure, and more powerful than ever.</p>
 <p>Our community is full of people from across the globe who bring incredible engagement and positive vibes to the project. And we finally got to experience this for the first time in real life during <a href="https://www.youtube.com/playlist?list=PLj6h78yzYM2OKySsTuiip3BqmdYZQRnSf" target="_blank" rel="noopener noreferrer">BackstageCon</a>, the very first in-person conference fully dedicated to Backstage, where hundreds of enthusiasts, the maintainers, adopters, and partners joined the event confirming the great momentum and the traction in the market.</p>
 <p>But before anticipating too much, let’s share some stats of this amazing 2022.</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="we-grew--a-lot">We grew … a lot!<a href="https://backstage.io/blog/2022/12/19/backstage-wrapped-2022#we-grew--a-lot" class="hash-link" aria-label="Direct link to We grew … a lot!" title="Direct link to We grew … a lot!">​</a></h2>
 <p>Last year we celebrated 75 <a href="https://github.com/backstage/backstage/blob/master/ADOPTERS.md" target="_blank" rel="noopener noreferrer">public adopters</a> and today we have over 600 adopters, confirming the interest around Backstage across all the industries, sectors, and dimensions. Companies like <a href="https://aws.amazon.com/solutions/case-studies/toyota-ecs-case-study/" target="_blank" rel="noopener noreferrer">Toyota North America</a>, Deutsche Bank, Mercedes-Benz, Procter &amp; Gamble, Siemens, LinkedIn, and many more joined the community this year and are actively contributing in growing the product and its maturity.</p>
 <p><img decoding="async" loading="lazy" alt="Accelerated growth of Public Backstage Adopters, from January 2021–December 2022." src="https://backstage.io/assets/images/public-backstage-adopters-2022-f056f7ce7232497865c0855adfbb43db.png" width="703" height="650" class="img_ev3q"></p>
@@ -809,7 +1074,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <summary type="html"><![CDATA[The new Linux Foundation course is available for free on edX and is designed to help individuals understand how to map Backstage to their organization needs]]></summary>
         <content type="html"><![CDATA[<p>Backstage continues to grow in <a href="https://roadie.io/blog/backstage-consolidating-its-role-in-the-cloud-native-ecosystem/" target="_blank" rel="noopener noreferrer">popularity and maturity</a>, with industry leaders not only adopting the framework but actively participating in the community through contributions and commercial offerings. One of the most recent contributions comes from the Linux Foundation, <a href="https://training.linuxfoundation.org/blog/23107/" target="_blank" rel="noopener noreferrer">launching an introductory course</a> aimed at DevOps engineers or professionals working on Developer Productivity or Developer Experience. The course is available for free on edX, with a paid option for the certified track.</p>
 <p><a href="https://www.edx.org/course/introduction-to-backstage-developer-portals-made-easy" target="_blank" rel="noopener noreferrer"><img decoding="async" loading="lazy" alt="Introduction to Backstage: Developer Portals Made Easy (LFS142x): Enroll!" src="https://backstage.io/assets/images/Introduction-to-Backstage-Developer-Portals-Made-Easy-2-768x432-b679b1797b22193b57a54566f6728879.png" width="768" height="432" class="img_ev3q"></a></p>
-<p>{/* truncate */}</p>
+<!-- -->
 <p>The course, <a href="https://www.edx.org/course/introduction-to-backstage-developer-portals-made-easy" target="_blank" rel="noopener noreferrer">Introduction to Backstage: Developer Portals Made Easy (LFS142x)</a>, starts discussing the benefits of adopting a Developer Portal. Then, it dives into what is Backstage, its main features (Catalog, Scaffolder, TechDocs), and how to map its capabilities to your organization. At last, it provides tips on how to connect with the community to ease up your adoption journey.</p>
 <p>The course author, <a href="https://www.linkedin.com/in/jrlainfiesta/" target="_blank" rel="noopener noreferrer">Jorge Lainfiesta</a>, is a Technical Marketing Manager at <a href="https://roadie.io/" target="_blank" rel="noopener noreferrer">Roadie</a>. Jorge has a background in software engineering (PayPal) and digital communication (UCLA). He’s been working around Backstage since it was open sourced by Spotify and co-hosts community initiatives like the Backstage Users Unconference.</p>]]></content>
         <author>
@@ -851,7 +1116,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <summary type="html"><![CDATA[TL;DR If you didn't know, now you know: the Backstage plugin analytics API is here to help you understand how developers in your organization are using Backstage.]]></summary>
         <content type="html"><![CDATA[<p><strong>TL;DR</strong> If you didn't know, now you know: the Backstage plugin analytics API is here to help you understand how developers in your organization are using Backstage.</p>
 <p><img decoding="async" loading="lazy" alt="The Plugin Analytics API" src="https://backstage.io/assets/images/analytics-api-fyi-c26c23b9aae00e45ee0cf4a4661c806c.png" width="1200" height="630" class="img_ev3q"></p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="what-is-the-plugin-analytics-api">What is the plugin analytics API?<a href="https://backstage.io/blog/2022/09/08/fyi-plugin-analytics-api#what-is-the-plugin-analytics-api" class="hash-link" aria-label="Direct link to What is the plugin analytics API?" title="Direct link to What is the plugin analytics API?">​</a></h2>
 <p>The plugin analytics API is a <a href="https://backstage.io/docs/api/utility-apis" target="_blank" rel="noopener noreferrer">utility api</a> available by default in every Backstage instance, intended to bridge the gap between the needs of Backstage integrators and plugin developers. While Backstage integrators want visibility into the plugins they’ve installed, they lack the power to instrument those plugins. And although plugin developers have the power to instrument plugins, they can’t do so without a single, vendor-agnostic way to track events. Enter: the plugin analytics API.</p>
 <p>While “analytics” as a concept can be broad, the goal of the API is narrowly focused: empower those deploying Backstage to understand usage of their instance. The plugin analytics API isn’t designed to solve for observability use-cases like tracing, logging, performance monitoring, error metrics, or alerting. Rather, the API is designed to capture and quantify real user interactions, which can form the basis for metrics like daily active users, top plugins, and more.</p>
@@ -886,7 +1151,7 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <content type="html"><![CDATA[<p><strong>TL;DR</strong> Backstage’s security posture continues to mature! Today, we’re releasing a report from an independent security audit and the first version of the Backstage Threat Model.</p>
 <p><img decoding="async" loading="lazy" alt="Backstage Security Audit &amp;amp; Updates" src="https://backstage.io/assets/images/backstage-security-audit-d0283e8fb2fc980642fd9b4be7057cf5.png" width="1200" height="630" class="img_ev3q"></p>
 <p>As an <a href="https://www.cncf.io/blog/2022/03/15/backstage-project-joins-the-cncf-incubator/" target="_blank" rel="noopener noreferrer">Incubating project</a> within the <a href="https://www.cncf.io/" target="_blank" rel="noopener noreferrer">Cloud Native Computing Foundation (CNCF)</a>, Backstage was fortunate enough to take advantage of a sponsored security audit. The <a href="https://ostif.org/" target="_blank" rel="noopener noreferrer">Open Source Technology Improvement Fund (OSTIF)</a> sponsored the audit as part of its ongoing efforts to secure the open source software ecosystem, and the audit itself was performed by <a href="https://x41-dsec.de/" target="_blank" rel="noopener noreferrer">X41 D-Sec</a>. Our goal with the audit was to evaluate and improve Backstage’s security posture, focusing on the core Backstage framework and plugins.</p>
-<p>{/* truncate */}</p>
+<!-- -->
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="report-findings-and-fixes">Report Findings and Fixes<a href="https://backstage.io/blog/2022/08/23/backstage-security-audit#report-findings-and-fixes" class="hash-link" aria-label="Direct link to Report Findings and Fixes" title="Direct link to Report Findings and Fixes">​</a></h2>
 <p>The security audit and improvements concluded earlier this month, on August 18th. The audit <strong>findings</strong> totalled two critical, two high, five medium, and three low severity vulnerabilities, alongside 15 side findings with no direct security impact. As of the <a href="https://backstage.io/docs/releases/v1.5.0" target="_blank" rel="noopener noreferrer">Backstage 1.5 release</a>, eight out of the 12 main findings and many of the side findings are fully remedied. If you are a few versions behind there’s no need to worry though, most fixes were included in the 1.3 release.</p>
 <p>Out of the four findings that have yet to be fixed, three are related to rate limiting or internal DoS concerns. With the introduction of the Backstage Threat Model (more on that below), Backstage’s positioning states that this is outside the scope of the security concerns of Backstage. Rather, we trust internal users of Backstage to not intentionally sabotage the availability of the service. This is not to say that we will never aim to get these findings addressed, but we have pushed them to be potential future improvements as we focus our near-term efforts on improving the product in other ways.</p>
@@ -906,148 +1171,6 @@ Pulumi will then create a container based deployment in Amazon Lightsail.</p>
         <author>
             <name>Patrik Oldsberg, Spotify</name>
             <uri>https://github.com/Rugvip</uri>
-        </author>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Releasing Backstage Search 1.0]]></title>
-        <id>https://backstage.io/blog/2022/07/19/releasing-backstage-search-1.0</id>
-        <link href="https://backstage.io/blog/2022/07/19/releasing-backstage-search-1.0"/>
-        <updated>2022-07-19T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[TL;DR If you’ve been waiting for Backstage Search to come out of beta, we’re excited to announce that Backstage Search 1.0 is here!]]></summary>
-        <content type="html"><![CDATA[<p><strong>TL;DR</strong> If you’ve been waiting for Backstage Search to come out of beta, we’re excited to announce that <a href="https://backstage.io/docs/features/search/#backstage-search-10" target="_blank" rel="noopener noreferrer">Backstage Search 1.0</a> is here!</p>
-<p>We first released the Backstage Search Platform over a year ago. Backstage Search Platform is a search experience built for you, by you.</p>
-<p><img decoding="async" loading="lazy" alt="Releasing Backstage Search 1.0" src="https://backstage.io/assets/images/releasing-backstage-search-v1-9712f17175a99b07d3c0fb933cc3f3a4.png" width="1201" height="631" class="img_ev3q"></p>
-<p>Backstage Search Platform makes it possible for you to search across your entire software ecosystem. With a Search platform that is customizable and extendable, you can identify your needs within your organization and set up search to solve these problems. Whether it is to search through the Software Catalog or technical documentation generated by the TechDocs plugin.</p>
-<p>{/* truncate */}</p>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="so-what-is-backstage-search-10">So what is Backstage Search 1.0?<a href="https://backstage.io/blog/2022/07/19/releasing-backstage-search-1.0#so-what-is-backstage-search-10" class="hash-link" aria-label="Direct link to So what is Backstage Search 1.0?" title="Direct link to So what is Backstage Search 1.0?">​</a></h2>
-<p>Since the first release of the Backstage Search Platform, we have seen a fantastic community grow around the search plugins. To mention just a few of these contributions:</p>
-<ul>
-<li>More search engine modules: <a href="https://www.npmjs.com/package/@backstage/plugin-search-backend-module-elasticsearch" target="_blank" rel="noopener noreferrer">Elasticsearch</a> originally <a href="https://github.com/backstage/backstage/pull/6569" target="_blank" rel="noopener noreferrer">contributed</a> by Roadie and <a href="https://www.npmjs.com/package/@backstage/plugin-search-backend-module-pg" target="_blank" rel="noopener noreferrer">Postgres</a> originally <a href="https://github.com/backstage/backstage/pull/6682" target="_blank" rel="noopener noreferrer">contributed</a> by SDA SE</li>
-<li>More components: Quick search modal, originally <a href="https://github.com/backstage/backstage/pull/7316" target="_blank" rel="noopener noreferrer">contributed</a> by Expedia Group</li>
-<li>More plugin integrations: TechDocs also <a href="https://github.com/backstage/backstage/pull/6375" target="_blank" rel="noopener noreferrer">contributed</a> by Roadie and <a href="https://github.com/backstage/backstage/pull/4515" target="_blank" rel="noopener noreferrer">Software Catalog</a></li>
-</ul>
-<p>These are just a few contributions of the countless enhancements and improvements made by contributors across the globe. With a well adopted and tested search platform we feel confident to release Backstage Search as 1.0.</p>
-<p>Packages included in Backstage Search 1.0 release are:</p>
-<p><strong>Core search packages</strong></p>
-<ul>
-<li><a href="https://www.npmjs.com/package/@backstage/plugin-search" target="_blank" rel="noopener noreferrer">@backstage/plugin-search</a></li>
-<li><a href="https://www.npmjs.com/package/@backstage/plugin-search-react" target="_blank" rel="noopener noreferrer">@backstage/plugin-search-react</a></li>
-<li><a href="https://www.npmjs.com/package/@backstage/plugin-search-common" target="_blank" rel="noopener noreferrer">@backstage/plugin-search-common</a></li>
-<li><a href="https://www.npmjs.com/package/@backstage/plugin-search-backend" target="_blank" rel="noopener noreferrer">@backstage/plugin-search-backend</a></li>
-<li><a href="https://www.npmjs.com/package/@backstage/plugin-search-backend-node" target="_blank" rel="noopener noreferrer">@backstage/plugin-search-backend-node</a></li>
-</ul>
-<p><strong>Modules</strong></p>
-<ul>
-<li><a href="https://www.npmjs.com/package/@backstage/plugin-search-backend-module-elasticsearch" target="_blank" rel="noopener noreferrer">@backstage/plugin-search-backend-module-elasticsearch</a></li>
-</ul>
-<p>No additional features are released as part of the major release as the maintainers of the search packages focused on the following for this release:</p>
-<ul>
-<li>Bug fixes and clean up of deprecations.</li>
-<li>Improved error handling for missing indices.</li>
-<li>Separation of AWS Elastic and Open Elastic support.</li>
-<li>Refactor the packages by moving reusable components from <code>@backstage/plugin-search</code> to <code>@backstage/plugin-search-react</code>.</li>
-<li>Improved documentation including tutorials for how to <a href="https://backstage.io/docs/plugins/integrating-search-into-plugins" target="_blank" rel="noopener noreferrer">Integrate Search into a plugin</a>.</li>
-</ul>
-<p>You might have noticed that the <a href="https://www.npmjs.com/package/@backstage/plugin-search-backend-module-pg" target="_blank" rel="noopener noreferrer">@backstage/plugin-search-backend-module-pg</a> package is not part of 1.0. That’s because that package is a community supported module, and therefore we have not included it as part of 1.0. If you are interested in pushing the Postgres engine to 1.0, feel free to reach out to us in the <a href="https://discord.com/channels/687207715902193673/770283289327566848" target="_blank" rel="noopener noreferrer">#search</a> channel on Discord.</p>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="elasticsearch-as-the-recommended-engine-for-production-usage">Elasticsearch as the recommended engine for production usage<a href="https://backstage.io/blog/2022/07/19/releasing-backstage-search-1.0#elasticsearch-as-the-recommended-engine-for-production-usage" class="hash-link" aria-label="Direct link to Elasticsearch as the recommended engine for production usage" title="Direct link to Elasticsearch as the recommended engine for production usage">​</a></h2>
-<p>When the Backstage Search Platform was first released, it came with an in-memory search engine as default - Lunr. While this is a good engine to use on a smaller scale and for local development (to avoid having to set up a search engine instance separately), it also has its limitations such as:</p>
-<ul>
-<li>Lunr does not scale well. Horizontally scaled deployments of Backstage and/or Backstage Search backend using Lunr result in either duplicated indexing processes and indices or inconsistent index state across nodes.</li>
-<li>Lunr’s filter functionality is limited, especially for <a href="https://github.com/olivernn/lunr.js/issues/353" target="_blank" rel="noopener noreferrer">logical AND/OR operators</a>.</li>
-<li>Lunr has a smaller community than Elasticsearch, which could mean that adopters relying on it will have less by way of resources for iterating on and improving search.</li>
-</ul>
-<p>Therefore, we recommend using Elasticsearch for production usage. Moving forward, the search maintainers will prioritize the Elasticsearch engine while we’ll rely on the community to maintain the Postgres engine.</p>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="how-to-contribute">How to contribute<a href="https://backstage.io/blog/2022/07/19/releasing-backstage-search-1.0#how-to-contribute" class="hash-link" aria-label="Direct link to How to contribute" title="Direct link to How to contribute">​</a></h2>
-<p>If you want to contribute and to further improve search, you can check out the <a href="https://github.com/backstage/backstage/issues?q=is%3Aissue+search+label%3Asearch+is%3Aopen" target="_blank" rel="noopener noreferrer">open issues labeled with search</a> or reach out to us at the <a href="https://discord.com/channels/687207715902193673/770283289327566848" target="_blank" rel="noopener noreferrer">#search</a> Discord channel.</p>
-<h2 class="anchor anchorWithStickyNavbar_LWe7" id="how-to-get-started">How to get started<a href="https://backstage.io/blog/2022/07/19/releasing-backstage-search-1.0#how-to-get-started" class="hash-link" aria-label="Direct link to How to get started" title="Direct link to How to get started">​</a></h2>
-<p>If you haven’t adopted the Backstage Search Platform yet and feel like now is a good time. Head over to the <a href="https://backstage.io/docs/features/search/getting-started" target="_blank" rel="noopener noreferrer">getting started docs</a>.</p>]]></content>
-        <author>
-            <name>Emma Indal, Spotify</name>
-            <uri>https://www.linkedin.com/in/emma-indal</uri>
-        </author>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Introducing the TechDocs Addon Framework]]></title>
-        <id>https://backstage.io/blog/2022/05/13/techdocs-addon-framework</id>
-        <link href="https://backstage.io/blog/2022/05/13/techdocs-addon-framework"/>
-        <updated>2022-05-13T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[This blog post is co-authored by Eric Peterson (@iamEAP), Spotify.]]></summary>
-        <content type="html"><![CDATA[<p><em>This blog post is co-authored by Eric Peterson (<a href="https://github.com/iamEAP" target="_blank" rel="noopener noreferrer">@iamEAP</a>), Spotify.</em></p>
-<p><img decoding="async" loading="lazy" alt="backstage header" src="https://backstage.io/assets/images/techdocs-addon-header-bd1f1bfe1225c1b1b749839deb82ad7f.gif" width="960" height="540" class="img_ev3q"></p>
-<p><em>TL;DR:</em> Introducing the TechDocs Addon Framework — a way for us all to contribute and share additional features, TechDocs Addons, on top of the base docs-like-code experience.</p>
-<p>{/* truncate */}</p>
-<p><a href="https://backstage.io/docs/features/techdocs/" target="_blank" rel="noopener noreferrer">TechDocs</a> is a centralized platform for publishing, viewing, and discovering technical documentation across an entire organization. It's a solid foundation! But TechDocs doesn't solve higher order documentation needs on its own such as: How do you create and reinforce a culture of documentation? How do you build trust in the quality of technical documentation?</p>
-<p>To address this need, we’re proud to introduce the <a href="https://github.com/backstage/backstage/issues/9636" target="_blank" rel="noopener noreferrer">TechDocs Addon Framework</a> — a way for us all to contribute and share additional features, TechDocs Addons, on top of the base docs-like-code experience. Using TechDocs Addons, you can customize the TechDocs experience to address some of these higher order needs.</p>
-<p>We plan to open source many of the TechDocs Addons that we use at Spotify. The first Addon we open sourced is ReportIssue, which you can start using today. ReportIssue enables you to highlight text on a page and quickly raise a templated issue for that text, in your version control system (currently supports GitHub and GitLab). The following images depict this Addon in practice.</p>
-<p><img decoding="async" loading="lazy" alt="techdocs-addon1" src="https://backstage.io/assets/images/techdocs-addon1-c2d6e00eda588dca1c65d5b6fc40893f.png" width="512" height="192" class="img_ev3q"></p>
-<p><img decoding="async" loading="lazy" alt="techdocs-addon2" src="https://backstage.io/assets/images/techdocs-addon2-d49f246c8e9e5dc286c32a904a1264c9.png" width="512" height="268" class="img_ev3q"></p>
-<p>Other Addons coming soon include a Stack Overflow card to surface relevant questions and answers and an Issue Counter.</p>
-<p><img decoding="async" loading="lazy" alt="techdocs-addon3" src="https://backstage.io/assets/images/techdocs-addon3-8bf8754967732f4d6b8b602afa6acd48.png" width="248" height="321" class="img_ev3q"></p>
-<p>We encourage you to use Addons that we open source and contribute Addons of your own as you solve technical documentation problems arising in your company. We can’t wait to see what you come up with!</p>
-<p>Here are some resources to help you get started with new TechDocs Addons:</p>
-<ul>
-<li><a href="https://backstage.io/docs/features/techdocs/addons#installing-and-using-addons" target="_blank" rel="noopener noreferrer">Installing and using Addons</a>: add an existing TechDocs Addon to your Backstage App</li>
-<li><a href="https://backstage.io/docs/features/techdocs/addons#creating-an-addon" target="_blank" rel="noopener noreferrer">Creating an Addon</a>: contribute a new Addon for others to use</li>
-<li><a href="https://backstage.io/docs/features/techdocs/addons" target="_blank" rel="noopener noreferrer">TechDocs Addon page</a>: read everything you need to know about TechDocs Addons</li>
-</ul>
-<h1>Next steps</h1>
-<p>At present, the TechDocs Addon Framework is focused on frontend experiences only. We know what’s available now is a solid foundation, but based on our experience developing and maintaining Addons over several years, we know there’s more to be done.</p>
-<p>One such pattern is the occasional need for Addons to retrieve or compute data that is not easily accessible. Examples of these at Spotify are Last Updated and Top Contributors. Seemingly simple, these Addons require the ability to run non-trivial git commands to determine when documentation itself was last updated, and by whom.</p>
-<p><img decoding="async" loading="lazy" alt="techdocs-addon5" src="https://backstage.io/assets/images/techdocs-addon5-f2ff977f962f132fdff42f813079bf03.png" width="298" height="74" class="img_ev3q"></p>
-<p>This next step is a bit more tricky and we would like to work with you all to make it happen. Take a look at <a href="https://github.com/backstage/backstage/issues/11110" target="_blank" rel="noopener noreferrer">this issue</a> in the GitHub repo, let us know what you think, and feel free to get involved.</p>]]></content>
-        <author>
-            <name>Gary Niemen, Spotify</name>
-            <uri>https://github.com/garyniemen/</uri>
-        </author>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[New release: Backstage 1.0]]></title>
-        <id>https://backstage.io/blog/2022/03/17/backstage-1.0</id>
-        <link href="https://backstage.io/blog/2022/03/17/backstage-1.0"/>
-        <updated>2022-03-17T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[backstage header]]></summary>
-        <content type="html"><![CDATA[<p><img decoding="async" loading="lazy" alt="backstage header" src="https://backstage.io/assets/images/release.1.0-1940dff917f34bba996af1a89e0549dc.gif" width="1200" height="603" class="img_ev3q"></p>
-<p><em>TL;DR:</em> If you’ve been waiting for Backstage to come out of beta, we’re excited to announce that Backstage 1.0 is here!</p>
-<p>{/* truncate */}</p>
-<p>It’s been two years since Spotify <a href="https://backstage.io/blog/2020/03/16/announcing-backstage" target="_blank" rel="noopener noreferrer">open sourced Backstage</a> so companies of all shapes and sizes — and in every industry all over the world — could build highly extensible and customized developer portals to best suit their organization’s needs and culture. Now hundreds of adopters are using Backstage as the single pane of glass for their core development, managing millions of components and technical documentation, and helping hundreds of thousands of developers be more productive and happy.</p>
-<p>This milestone demonstrates Backstage’s maturity and the incredible effort from the core maintainers, contributors, and adopters. In a short time, we’ve seen a global community grow rapidly with people bringing their passion to this project and our goal of empowering developers. Because, yes, this is also your goal and your time to celebrate.</p>
-<p>If you’re thinking “what is Backstage 1.0, and what does it include?” You’re not alone, so let’s get into it.</p>
-<p>To start, let’s define Backstage: it’s an open platform for building developer portals, mainly defined by a set of libraries together with plugins that can be added, removed, or customized so that the final behavior of the developer portal product is what an adopter wants. For the past two years, the open source platform has been in beta. With Backstage 1.0, we're coming out of beta and into production with regular versioning and release cycle commitments. So, if your company requires production-ready software, you can now use Backstage and join <a href="https://github.com/backstage/backstage/blob/master/ADOPTERS.md" target="_blank" rel="noopener noreferrer">over 100 other public adopters</a>!</p>
-<p>Our definition of Backstage 1.0 includes:</p>
-<ul>
-<li>Backstage Core 1.0 libraries as the set of libraries to make the platform work</li>
-<li><a href="https://backstage.io/docs/features/software-catalog/" target="_blank" rel="noopener noreferrer">Backstage Software Catalog</a> 1.0</li>
-<li><a href="https://backstage.io/docs/features/software-templates/" target="_blank" rel="noopener noreferrer">Backstage Software Templates</a> 1.0</li>
-<li><a href="https://backstage.io/docs/features/techdocs/" target="_blank" rel="noopener noreferrer">Backstage TechDocs</a> 1.0</li>
-</ul>
-<p>Coming soon: <a href="https://backstage.io/docs/features/search/" target="_blank" rel="noopener noreferrer">Backstage Search</a> 1.0 will be included in the near future as part of the regular releases to the Backstage platform.</p>
-<p>In terms of features, the maintainers will not be shipping new stuff as part of the major release but instead:</p>
-<ul>
-<li>Refactoring the code packaging to better reflect the release numbering</li>
-<li>Removal of deprecated services to reduce the risk of introducing breaking changes</li>
-<li>Establishing clarity on the release lifecycle, numbering, and cadence as well as the support model</li>
-<li>Improvements to Backstage.io documentation</li>
-</ul>
-<h1>The road ahead</h1>
-<p>In terms of maturity and stability, the road ahead for Backstage is bright and busy. The goal is to bring Backstage to the next level of maturity and continue improving it, according to adopter growth, feature set, and identified use cases.</p>
-<p>You can read more about Backstage’s roadmap <a href="https://backstage.io/docs/overview/roadmap" target="_blank" rel="noopener noreferrer">here</a>, but in terms of maturity and stability we would like to highlight the following:</p>
-<ul>
-<li>CNCF incubation: The Backstage project <a href="https://www.cncf.io/blog/2022/03/15/backstage-project-joins-the-cncf-incubator/" target="_blank" rel="noopener noreferrer">recently moved from Sandbox to Incubation</a> phase within the <a href="https://www.cncf.io/projects/#:~:text=Maturity%20levels,should%20be%20adopting%20different%20projects." target="_blank" rel="noopener noreferrer">CNCF maturity levels</a>.</li>
-<li>Security auditing and strategy: With the CNCF’s support, the project maintainers are working on a security audit initiative to make the platform more secure and will share more details soon. The audit is part of an overall security strategy being developed this quarter.</li>
-<li>Paid plugins for advanced and enterprise use cases: Last year, <a href="https://backstage.spotify.com/blog/paid-plugins-announcement/" target="_blank" rel="noopener noreferrer">Spotify announced its work on paid plugins</a> built on top of the Backstage open source platform. This is another example of the platform’s maturity and Spotify’s continued commitment to the project, with a focus on customers and use cases requiring enterprise-focused support and plugins developed and proven by Spotify.</li>
-</ul>
-<h1>Some links to peruse</h1>
-<p>If you want to know more about this first major release, check out the following links to learn more about this release effort and receive support.</p>
-<ul>
-<li><a href="https://backstage.io/docs/releases/v1.0.0" target="_blank" rel="noopener noreferrer">Release notes</a> and <a href="https://github.com/backstage/backstage/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">Changelog</a>.</li>
-<li><a href="https://backstage.io/docs/" target="_blank" rel="noopener noreferrer">Backstage official documentation</a> and <a href="https://backstage.spotify.com/" target="_blank" rel="noopener noreferrer">backstage.spotify.com</a>.</li>
-<li><a href="https://discord.gg/backstage-687207715902193673" target="_blank" rel="noopener noreferrer">Discord channel</a>.</li>
-<li><a href="https://github.com/backstage/backstage" target="_blank" rel="noopener noreferrer">Backstage repository on GitHub</a>.</li>
-<li><a href="https://github.com/backstage/backstage/blob/master/ADOPTERS.md" target="_blank" rel="noopener noreferrer">List of public adopters</a>.</li>
-</ul>]]></content>
-        <author>
-            <name>Francesco Corti, Spotify</name>
-            <uri>https://github.com/fcorti/</uri>
         </author>
     </entry>
 </feed>
